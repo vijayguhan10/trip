@@ -34,7 +34,7 @@ const HomeScreen = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={styles.container}>
+      <ScrollView  contentContainerStyle={{ flexGrow: 1 }} style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={toggleSidebar}>
             <Icon
