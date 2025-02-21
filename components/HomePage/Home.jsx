@@ -9,12 +9,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Icon } from "react-native-elements";
-import {
-  useFonts,
-  Nunito_400Regular,
-  Nunito_700Bold,
-  Montserrat_400Regular,
-} from "@expo-google-fonts/montserrat";
+import { useFonts } from "expo-font";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -23,9 +18,13 @@ import Sidebar from "../SideBar";
 
 const HomeScreen = () => {
   const [fontsLoaded] = useFonts({
-    Nunito_Regular: Montserrat_400Regular,
-    Nunito_Bold: Nunito_700Bold,
+    Noir_Regular: require("../../fonts/Noir_regular.otf"),
+    Noir_Bold:require("../../fonts/Noir_regular.otf"),
   });
+
+  if (!fontsLoaded) {
+    return <Text>No fonts Loaded</Text>;
+  }
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -107,11 +106,11 @@ const HomeScreen = () => {
                 />
                 <DestinationItem
                   title="Sinhagad Fort"
-                  imageUri="https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718"
+                  imageUri="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtD6NqBnrOrK4UcNa9X3uBuRFBx1TcXBcn2Q&s"
                 />
                 <DestinationItem
                   title="Mulshi Dam"
-                  imageUri="https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718"
+                  imageUri="https://images.unsplash.com/photo-1533130061792-64b345e4a833?ixid=M3wxMzcxOTN8MHwxfHNlYXJjaHwyfHxtb3VudGFpbiUyMHBlYWt8ZW58MHx8fHwxNjg0MTQ4OTI3fDA&ixlib=rb-4.0.3&fm=jpg&w=3300&h=2200&fit=max"
                 />
               </ScrollView>
             </View>
@@ -122,7 +121,7 @@ const HomeScreen = () => {
               <Image
                 style={styles.ActivityImage}
                 source={{
-                  uri: "https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718",
+                  uri: "https://img.freepik.com/premium-photo/sunset-view-mountains-mountains_865967-1116351.jpg",
                 }}
               />
               <Image
@@ -184,13 +183,14 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   search: {
-    flex: 1,
+    // flex: 1,
     alignItems: "flex-end",
   },
   welcomeText: {
     fontSize: wp("6%"),
     fontWeight: "light",
     textAlign: "center",
+    marginLeft:wp("3%"),
   },
   weatherContainer: {
     alignItems: "center",
