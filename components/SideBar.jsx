@@ -6,9 +6,9 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-const Sidebar = () => {
+const Sidebar = ({ isSidebarOpen }) => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { width: isSidebarOpen ? wp("80%") : 0 }]}>
       <View style={styles.header}>
         <Image
           source={{ uri: "https://your-image-url.com" }}
@@ -19,32 +19,44 @@ const Sidebar = () => {
           <Text style={styles.userEmail}>dinu@gmail.com</Text>
         </View>
       </View>
-
       <View style={styles.menuContainer}>
         {menuItems.map((item, index) => (
           <TouchableOpacity key={index} style={styles.menuItem}>
-            <Icon name={item.icon} type={item.type} size={hp("3%")} />
+            <Icon
+              name={item.icon}
+              type={item.type}
+              size={hp("3%")}
+              style={{
+                marginLeft: wp("4%"),
+                borderRadius: wp("5%"),
+                width: wp("7%"),
+                height: hp("3.6%"),
+                backgroundColor: "#F4F1EC",
+              }}
+            />
             <Text style={styles.menuText}>{item.label}</Text>
             <Icon name="chevron-right" type="feather" size={hp("2.5%")} />
           </TouchableOpacity>
         ))}
       </View>
-
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerItem}>
-          <Icon name="headset" type="material" size={hp("3%")} />
-          <Text style={styles.footerText}>Support</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.footerItem}>
-          <Icon name="notifications" type="material" size={hp("3%")} />
-          <Text style={styles.footerText}>Notifications</Text>
-        </TouchableOpacity>
+      <View style={styles.supportcontainerOuter}>
+        <View style={styles.supportcontainer}>
+          <View style={styles.iconWrapper}>
+            <Icon name="log-out" type="feather" size={hp("3%")} color="#000" />
+          </View>
+          <Text style={styles.logoutText}>Log out</Text>
+        </View>
+        <View style={styles.supportcontainer}>
+          <View style={styles.iconWrapper}>
+            <Icon name="log-out" type="feather" size={hp("3%")} color="#000" />
+          </View>
+          <Text style={styles.logoutText}>Log out</Text>
+        </View>
       </View>
-
-      <TouchableOpacity style={styles.logoutButton}>
+      <View style={styles.logoutButton}>
         <Icon name="log-out" type="feather" size={hp("3%")} />
         <Text style={styles.logoutText}>Log out</Text>
-      </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -54,49 +66,94 @@ const menuItems = [
   { label: "Train on Food", icon: "fastfood", type: "material" },
   { label: "Places to visit", icon: "location-pin", type: "entypo" },
   { label: "Shopping", icon: "shopping-bag", type: "feather" },
-  { label: "Things to Carry", icon: "suitcase", type: "material-community" },
+  { label: "Things to Carry", icon: "fastfood", type: "material-community" },
   { label: "My bookings", icon: "calendar", type: "feather" },
   { label: "My Profile", icon: "user", type: "feather" },
 ];
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: wp("20%") },
+  container: {
+    fontSize: hp("1%"),
+    backgroundColor: "#fff",
+    paddingHorizontal: wp("5%"),
+    paddingVertical: hp("9%"),
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 1000,
+    // width: wp("80%"),
+  },
+
   header: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: hp("2%"),
   },
-  profileImage: { width: wp("15%"), height: wp("15%"), borderRadius: 50 },
-  userName: { fontSize: hp("2.5%"), fontWeight: "bold" },
-  userEmail: { fontSize: hp("2%"), color: "gray" },
-  menuContainer: { flex: 1 },
+  profileImage: {
+    width: wp("12%"),
+    height: wp("12%"),
+    borderRadius: wp("6%"),
+    marginRight: wp("4%"),
+  },
+  userName: {
+    fontWeight: "bold",
+  },
+  userEmail: {
+    color: "gray",
+  },
+  menuContainer: {
+    // flex: 1,
+  },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: hp("1.5%"),
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    marginVertical: hp("0.3%"),
+    paddingVertical: hp("1.6%"),
+    borderWidth: 1,
+    borderColor: "#eee",
+    borderRadius: wp("2%"),
   },
-  menuText: { flex: 1, fontSize: hp("2%"), marginLeft: wp("4%") },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingVertical: hp("2%"),
-    borderTopWidth: 1,
-    borderTopColor: "#eee",
+  menuText: {
+    flex: 1,
+    fontSize: hp("1.5%"),
+    marginLeft: wp("4%"),
   },
-  footerItem: { alignItems: "center" },
-  footerText: { fontSize: hp("1.8%"), marginTop: hp("0.5%") },
   logoutButton: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: hp("1.5%"),
+    // alignItems: "center",
+    // justifyContent: "center",
+    paddingVertical: hp("1.6%"),
+    paddingLeft: wp("5%"),
     backgroundColor: "#f8f8f8",
     borderRadius: 10,
-    marginTop: hp("2%"),
+    marginTop: hp("5%"),
   },
-  logoutText: { fontSize: hp("2%"), marginLeft: wp("3%") },
+  supportcontainerOuter: {
+    marginTop:hp("1%"),
+    borderColor: "#F4F1EC",
+    borderRadius: hp("1.5%"),
+    borderWidth: wp("0.4%"),
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: wp("7%"),
+  },
+  supportcontainer: {
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  iconWrapper: {
+    backgroundColor: "#D1FFFF",
+    borderRadius: 50,
+    padding: hp("1%"),
+    borderWidth: 2,
+    borderColor: "white",
+  },
+
+  logoutText: {
+    fontSize: hp("1.5%"),
+    marginLeft: wp("3%"),
+  },
 });
 
 export default Sidebar;

@@ -6,7 +6,7 @@ import {
   Nunito_700Bold,
 } from "@expo-google-fonts/montserrat";
 import Footer from "./components/Footer";
-import HomeScreen from "./components/HomePage";
+import HomeScreen from "./HomePage/HomePage";
 export default function App() {
   const [fontsLoaded] = useFonts({
     Nunito_Regular: Nunito_400Regular,
