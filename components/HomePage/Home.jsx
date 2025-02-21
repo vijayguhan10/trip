@@ -19,17 +19,13 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import Sidebar from "../components/SideBar";
+import Sidebar from "../SideBar";
 
 const HomeScreen = () => {
   const [fontsLoaded] = useFonts({
     Nunito_Regular: Montserrat_400Regular,
     Nunito_Bold: Nunito_700Bold,
   });
-
-  //   if (!fontsLoaded) {
-  //     return <Text>Loading the Font</Text>;
-  //   }
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -97,37 +93,30 @@ const HomeScreen = () => {
 
           {/* Top Destinations */}
           <Text style={styles.sectionTitle}>Top Destinations</Text>
-          <ScrollView>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.destinationsContainer}
-            >
-              <DestinationItem
-                title="Shaniwar Wada"
-                imageUri="https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718"
-              />
-              <DestinationItem
-                title="Sinhagad Fort"
-                imageUri="https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718"
-              />
-              <DestinationItem
-                title="Mulshi Dam"
-                imageUri="https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718"
-              />
-              <DestinationItem
-                title="Shaniwar Wada"
-                imageUri="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyFNqGYtzbCcbPrdz8XJ6qA4Nbj6T4lQH0M8IksFTecnioZyTOMzTl2-4X-TP06gP9GOI&usqp=CAU"
-              />
-              <DestinationItem
-                title="Sinhagad Fort"
-                imageUri="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyFNqGYtzbCcbPrdz8XJ6qA4Nbj6T4lQH0M8IksFTecnioZyTOMzTl2-4X-TP06gP9GOI&usqp=CAU"
-              />
-              <DestinationItem
-                title="Mulshi Dam"
-                imageUri="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyFNqGYtzbCcbPrdz8XJ6qA4Nbj6T4lQH0M8IksFTecnioZyTOMzTl2-4X-TP06gP9GOI&usqp=CAU"
-              />
-            </ScrollView>
+          <ScrollView nestedScrollEnabled={true} style={styles.container}>
+            {/* Horizontal ScrollView for Destinations */}
+            <View>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.destinationsContainer}
+              >
+                <DestinationItem
+                  title="Shaniwar Wada"
+                  imageUri="https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718"
+                />
+                <DestinationItem
+                  title="Sinhagad Fort"
+                  imageUri="https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718"
+                />
+                <DestinationItem
+                  title="Mulshi Dam"
+                  imageUri="https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718"
+                />
+              </ScrollView>
+            </View>
+
+            {/* Top Activities Section */}
             <View>
               <Text style={styles.Activitytext}>Top activities</Text>
               <Image

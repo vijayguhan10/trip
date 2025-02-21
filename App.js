@@ -1,50 +1,54 @@
 import { StatusBar } from "expo-status-bar";
+import { useFonts } from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StyleSheet, View } from "react-native";
-import {
-  useFonts,
-  Nunito_400Regular,
-  Nunito_700Bold,
-} from "@expo-google-fonts/montserrat";
-import Footer from "./components/Footer";
-import HomeScreen from "./HomePage/HomePage";
+import { StyleSheet, View, ActivityIndicator, Text } from "react-native";
 import LoginScreen from "./components/Loginpage/login";
+import HomeScreen from "./components/HomePage/Home";
+import Footer from "./components/Footer";
+import Food from "./components/Foods/FoodHome";
 
 const Stack = createStackNavigator();
 
-function HomeScreenWithFooter({ navigation }) {
-  return (
-    <View style={{ flex: 1 }}>
-      <HomeScreen navigation={navigation} />
-      <Footer />
-    </View>
-  );
-}
-
 export default function App() {
   const [fontsLoaded] = useFonts({
-    Nunito_Regular: Nunito_400Regular,
-    Nunito_Bold: Nunito_700Bold,
+    Noir_Regular: require("./fonts/Noir_regular.otf"),
+    Noir_Bold: require("./fonts/Noir_medium.otf"), 
   });
+
+  if (!fontsLoaded) {
+    return (
+      <Text>No fonts Loaded</Text>
+    );
+  }
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Home" component={HomeScreenWithFooter} />
-      </Stack.Navigator>
-      <StatusBar style="auto" />
+      <View style={{ flex: 1 }}>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Food" component={Food} />
+        </Stack.Navigator>
+
+        <Footer />
+        <StatusBar style="auto" />
+      </View>
     </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    fontFamily: "Nunito_Regular",
+  loadingContainer: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
+  },
+  text: {
+    fontFamily: "Noir_Bold", 
+    fontSize: 18,
   },
 });

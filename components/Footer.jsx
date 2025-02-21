@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import { Icon } from "react-native-elements";
+import { useNavigation } from "@react-navigation/native";
 
 const Footer = () => {
   const [activeIcon, setActiveIcon] = useState("home");
+  const navigation = useNavigation(); 
 
   return (
     <View style={styles.bottomNavigation}>
@@ -14,7 +16,12 @@ const Footer = () => {
             styles.iconContainer,
             activeIcon === item.name && styles.activeIcon,
           ]}
-          onPress={() => setActiveIcon(item.name)}
+          onPress={() => {
+            setActiveIcon(item.name);
+            if (item.screen) {
+              navigation.navigate(item.screen);
+            }
+          }}
         >
           <Icon
             name={item.name}
@@ -28,11 +35,12 @@ const Footer = () => {
   );
 };
 
+// Define menu items with navigation screens
 const menuItems = [
-  { name: "home", type: "material" },
-  { name: "restaurant", type: "material" },
-  { name: "money", type: "material" },
-  { name: "currency-rupee", type: "material" }, 
+  { name: "home", type: "material", screen: "Home" }, // Navigate to Home
+  { name: "restaurant", type: "material", screen: "Food" }, // Navigate to Food
+  { name: "money", type: "material" }, // No navigation for now
+  { name: "currency-rupee", type: "material" }, // No navigation for now
 ];
 
 const { width } = Dimensions.get("window");
