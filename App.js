@@ -9,6 +9,7 @@ import Places from "./components/Placestovisit/places";
 import Shopping from "./components/shopping/shopping";
 import FoodHome from "./components/Foods/FoodHome"
 import HomeScreen from "./components/Homepage/Homepage";
+import Footer from "./components/Footer"
 const Stack = createStackNavigator();
 
 function HomeScreenWithFooter({ navigation }) {
