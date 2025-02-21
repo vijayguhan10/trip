@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "TripApp",
-    "slug": "TripApp",
+    "name": "4trip",
+    "slug": "4trip",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,7 +11,7 @@
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
-    },
+    },         
     "ios": {
       "supportsTablet": true
     },
@@ -19,10 +19,24 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.vijayguhan.fourtrip"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6d87ce2d-a9e9-448c-b1d4-c1dbfa823890"
+      }
+    },
+    "owner": "vijayguhan",
+    "updates": {
+      "url": "https://u.expo.dev/6d87ce2d-a9e9-448c-b1d4-c1dbfa823890",
+      "fallbackToCacheTimeout": 0
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
