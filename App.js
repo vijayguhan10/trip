@@ -8,7 +8,7 @@ import {
   Nunito_700Bold,
 } from "@expo-google-fonts/montserrat";
 import Footer from "./components/Footer";
-import HomeScreen from "./components/HomePage";
+import HomeScreen from "./components/Homepage/Home";
 import LoginScreen from "./components/Loginpage/login";
 
 const Stack = createStackNavigator();
