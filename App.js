@@ -1,18 +1,14 @@
 import { StatusBar } from "expo-status-bar";
+import { useFonts } from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StyleSheet, View } from "react-native";
-import {
-  useFonts,
-  Nunito_400Regular,
-  Nunito_700Bold,
-} from "@expo-google-fonts/montserrat";
-import Footer from "./components/Footer";
-import HomeScreen from "./components/Homepage/Home";
+import { StyleSheet, View, ActivityIndicator, Text } from "react-native";
 import LoginScreen from "./components/Loginpage/login";
 import Traintrackingscreen from "./components/Traintracking/traintracking"
 import Places from "./components/Placestovisit/places";
 import Shopping from "./components/shopping/shopping";
+import FoodHome from "./components/Foods/FoodHome"
+import HomeScreen from "./components/Homepage/Homepage";
 const Stack = createStackNavigator();
 
 function HomeScreenWithFooter({ navigation }) {
@@ -47,20 +43,35 @@ function Shoppingwithfooter({navigation}){
     </View>
   );
 }
+function FoodHomewithfooter({navigation}){
+  return (
+    <View style={{ flex: 1 }}>
+      <FoodHome navigation={navigation} />
+      <Footer />
+    </View>
+  );
+}
 export default function App() {
   const [fontsLoaded] = useFonts({
-    Nunito_Regular: Nunito_400Regular,
-    Nunito_Bold: Nunito_700Bold,
+    Noir_Regular: require("./fonts/Noir_regular.otf"),
+    Noir_Bold: require("./fonts/Noir_medium.otf"), 
   });
+
+  if (!fontsLoaded) {
+    return (
+      <Text>No fonts Loaded</Text>
+    );
+  }
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Shopping" screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={HomeScreenWithFooter} />
         <Stack.Screen name="Traintracking" component={Traintrackingscreenwithfooter} />
         <Stack.Screen name="Places" component={Placesscreenwithfooter} />
         <Stack.Screen name="Shopping" component={Shoppingwithfooter} />
+        <Stack.Screen name="Food" component={FoodHomewithfooter} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
@@ -68,11 +79,13 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    fontFamily: "Nunito_Regular",
+  loadingContainer: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
+  },
+  text: {
+    fontFamily: "Noir_Bold", 
+    fontSize: 18,
   },
 });
