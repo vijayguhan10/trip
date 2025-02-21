@@ -5,8 +5,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-
+import { useNavigation } from "@react-navigation/native"; 
 const Sidebar = ({ isSidebarOpen }) => {
+  const navigation = useNavigation(); 
   return (
     <View style={[styles.container, { width: isSidebarOpen ? wp("80%") : 0 }]}>
       <View style={styles.header}>
@@ -21,7 +22,7 @@ const Sidebar = ({ isSidebarOpen }) => {
       </View>
       <View style={styles.menuContainer}>
         {menuItems.map((item, index) => (
-          <TouchableOpacity key={index} style={styles.menuItem}>
+          <TouchableOpacity key={index} style={styles.menuItem}  onPress={() => navigation.navigate(item.screen)} >
             <Icon
               name={item.icon}
               type={item.type}
@@ -62,15 +63,14 @@ const Sidebar = ({ isSidebarOpen }) => {
 };
 
 const menuItems = [
-  { label: "Live Train Tracking", icon: "train", type: "material" },
-  { label: "Train on Food", icon: "fastfood", type: "material" },
-  { label: "Places to visit", icon: "location-pin", type: "entypo" },
-  { label: "Shopping", icon: "shopping-bag", type: "feather" },
-  { label: "Things to Carry", icon: "fastfood", type: "material-community" },
-  { label: "My bookings", icon: "calendar", type: "feather" },
-  { label: "My Profile", icon: "user", type: "feather" },
+  { label: "Live Train Tracking", icon: "train", type: "material", screen: "Traintracking" },
+  { label: "Train on Food", icon: "fastfood", type: "material", screen: "Food" },
+  { label: "Places to Visit", icon: "location-pin", type: "entypo", screen: "Places" },
+  { label: "Shopping", icon: "shopping-bag", type: "feather", screen: "Shopping" },
+  { label: "Things to Carry", icon: "fastfood", type: "material-community", screen: "Home" },
+  { label: "My Bookings", icon: "calendar", type: "feather", screen: "Home" },
+  { label: "My Profile", icon: "user", type: "feather", screen: "Home" },
 ];
-
 const styles = StyleSheet.create({
   container: {
     fontSize: hp("1%"),
