@@ -10,6 +10,8 @@ import Shopping from "./components/shopping/shopping";
 import FoodHome from "./components/Foods/FoodHome"
 import HomeScreen from "./components/Homepage/Homepage";
 import Footer from "./components/Footer"
+import ThingsToCarry from "./components/Thingstocarrry/things"
+import Bookings from "./components/Mybookings/Bookings"
 const Stack = createStackNavigator();
 
 function HomeScreenWithFooter({ navigation }) {
@@ -52,6 +54,22 @@ function FoodHomewithfooter({navigation}){
     </View>
   );
 }
+function ThingsToCarrywithfooter({navigation}){
+  return (
+    <View style={{ flex: 1 }}>
+      <ThingsToCarry navigation={navigation} />
+      <Footer />
+    </View>
+  );
+}
+function Mybookingswithfooter({navigation}){
+  return (
+    <View style={{ flex: 1 }}>
+      <Bookings navigation={navigation} />
+      <Footer />
+    </View>
+  );
+}
 export default function App() {
   const [fontsLoaded] = useFonts({
     Noir_Regular: require("./fonts/Noir_regular.otf"),
@@ -73,6 +91,8 @@ export default function App() {
         <Stack.Screen name="Places" component={Placesscreenwithfooter} />
         <Stack.Screen name="Shopping" component={Shoppingwithfooter} />
         <Stack.Screen name="Food" component={FoodHomewithfooter} />
+        <Stack.Screen name="Things" component={ThingsToCarrywithfooter} />
+        <Stack.Screen name="Mybookings" component={Mybookingswithfooter} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>

@@ -67,8 +67,8 @@ const menuItems = [
   { label: "Train on Food", icon: "fastfood", type: "material", screen: "Food" },
   { label: "Places to Visit", icon: "location-pin", type: "entypo", screen: "Places" },
   { label: "Shopping", icon: "shopping-bag", type: "feather", screen: "Shopping" },
-  { label: "Things to Carry", icon: "fastfood", type: "material-community", screen: "Home" },
-  { label: "My Bookings", icon: "calendar", type: "feather", screen: "Home" },
+  { label: "Things to Carry", icon: "fastfood", type: "material-community", screen: "Things" },
+  { label: "My Bookings", icon: "calendar", type: "feather", screen: "Mybookings" },
   { label: "My Profile", icon: "user", type: "feather", screen: "Home" },
 ];
 const styles = StyleSheet.create({
