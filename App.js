@@ -10,7 +10,8 @@ import {
 import Footer from "./components/Footer";
 import HomeScreen from "./components/Homepage/Home";
 import LoginScreen from "./components/Loginpage/login";
-
+import Traintrackingscreen from "./components/Traintracking/traintracking"
+import Places from "./components/Placestovisit/places";
 const Stack = createStackNavigator();
 
 function HomeScreenWithFooter({ navigation }) {
@@ -21,7 +22,22 @@ function HomeScreenWithFooter({ navigation }) {
     </View>
   );
 }
-
+function Traintrackingscreenwithfooter({ navigation }) {
+  return (
+    <View style={{ flex: 1 }}>
+      <Traintrackingscreen navigation={navigation} />
+      <Footer />
+    </View>
+  );
+}
+function Placesscreenwithfooter({navigation}){
+  return (
+    <View style={{ flex: 1 }}>
+      <Places navigation={navigation} />
+      <Footer />
+    </View>
+  );
+}
 export default function App() {
   const [fontsLoaded] = useFonts({
     Nunito_Regular: Nunito_400Regular,
@@ -30,9 +46,11 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName="Places" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={HomeScreenWithFooter} />
+        <Stack.Screen name="Traintracking" component={Traintrackingscreenwithfooter} />
+        <Stack.Screen name="Places" component={Placesscreenwithfooter} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>

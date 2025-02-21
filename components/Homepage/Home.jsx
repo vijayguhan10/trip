@@ -29,9 +29,9 @@ const HomeScreen = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(false);
+    setIsSidebarOpen((prev) => !prev);
   };
-
+  
   return (
     <View style={{ flex: 1 }}>
       <ScrollView  contentContainerStyle={{ flexGrow: 1 }} style={styles.container}>
