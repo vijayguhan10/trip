@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Pressable, TextInput } from "react-native";
+import { View, Text, StyleSheet, Pressable, TextInput,Modal,TouchableOpacity,Image} from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Icon } from "react-native-elements";
 import { DatePickerModal } from "react-native-paper-dates";
@@ -7,7 +7,7 @@ import { DatePickerModal } from "react-native-paper-dates";
 const Booktable = ({ navigation }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-
+  const [modalVisible, setModalVisible] = useState(false);
   return (
     <View style={styles.container}>
       <View style={styles.icon}>
@@ -41,10 +41,29 @@ const Booktable = ({ navigation }) => {
           <Text style={styles.reserveText}>Reserve Your Table with a Small Advance!</Text>
           <TextInput style={styles.input} placeholder="Enter Amount - ₹ 100" placeholderTextColor="#999" />
         </View>
-        <Pressable style={styles.button}>
+        <Pressable style={styles.button} onPress={()=>setModalVisible(true)}>
           <Text style={styles.buttonText}>Book My Table</Text>
         </Pressable>
       </View>
+      <Modal visible={modalVisible} transparent animationType="fade">
+      <View style={styles.modalOverlay}>
+        <View style={styles.successPopup}>
+                   <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                     <Icon name="close" size={15} color="white" />
+                   </TouchableOpacity>
+
+
+          <Image
+            source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-qYFE9pg-7oly7Ge7LnDsuqIPQmvdbwae4g&s" }} 
+            style={styles.image}
+            resizeMode="contain"
+          />
+
+          <Text style={styles.successText}>Thank you! Booking has been Confirmed!</Text>
+          <Text style={styles.subText}>Please check your inbox for table confirmation details.</Text>
+        </View>
+      </View>
+    </Modal>
     </View>
   );
 };
@@ -119,6 +138,52 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: wp("5%"),
     fontWeight: "600",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  successPopup: {
+    width: wp("85%"),
+    backgroundColor: "white",
+    padding: wp("5%"),
+    borderRadius: wp("4%"),
+    alignItems: "center",
+    position: "relative",
+  },
+  closeButton: {
+    position: "absolute",
+    top: hp("2%"),
+    right: wp("4%"),
+    backgroundColor: "red",
+    borderRadius: wp("5%"),
+    width: wp("8%"),
+    height: wp("8%"),
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  closeText: {
+    color: "white",
+    fontSize: wp("5%"),
+    fontWeight: "bold",
+  },
+  image: {
+    width: wp("70%"),
+    height: hp("20%"),
+    marginBottom: hp("2%"),
+  },
+  successText: {
+    fontSize: hp("2.2%"),
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: hp("1%"),
+  },
+  subText: {
+    fontSize: hp("1.8%"),
+    textAlign: "center",
+    color: "gray",
   },
 });
 
