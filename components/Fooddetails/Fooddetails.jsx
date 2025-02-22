@@ -1,0 +1,495 @@
+
+
+
+import React from 'react'
+import { View, Text, StyleSheet, TouchableOpacity,ScrollView,Image} from 'react-native'
+import { Icon } from 'react-native-elements'
+import { TextInput } from 'react-native-gesture-handler'
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen'
+const topPicks = [
+  {
+    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?w=300&h=200&fit=crop",
+    title: "Masala Dosa",
+    description: "It's traditionally filled with a spiced potato mixture made with onions, mustard seeds, curry leaves, and turmeric.",
+    price: "149",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?w=300&h=200&fit=crop",
+    title: "Masala Dosa",
+    description: "It's traditionally filled with a spiced potato mixture made with onions, mustard seeds, curry leaves, and turmeric.",
+    price: "149",
+  },
+];
+
+const recommendedDishes = [
+  {
+    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop",
+    title: "Steam Idli",
+    description: "Idli is a traditional South Indian dish made from fermented rice and urad dal (black gram) batter, steamed into soft, fluffy cakes.",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop",
+    title: "Medu Wada",
+    description: "Medu Wada is a South Indian doughnut-shaped fritter made with urad dal, crispy on the outside and soft inside.",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop",
+    title: "Medu Wada",
+    description: "Medu Wada is a South Indian doughnut-shaped fritter made with urad dal, crispy on the outside and soft inside.",
+  },
+];
+
+const DishCard = ({ image, title, description, price }) => (
+  
+  <TouchableOpacity style={styles.dishCard}>
+    <Image source={{ uri: image }} style={styles.dishImage} />
+    <View style={styles.overlay}>
+      <View style={styles.vegIcon}>
+        <View style={styles.vegSquare}>
+          <View style={styles.vegDot} />
+        </View>
+      </View>
+      <Text style={styles.dishTitle}>{title}</Text>
+      <Text style={styles.dishDescription} numberOfLines={2}>
+        {description}
+      </Text>
+      <Text style={styles.dishPrice}>₹{price}</Text>
+    </View>
+  </TouchableOpacity>
+);
+const Fooddetails = ({ navigation }) => {
+  return (
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <View style={styles.icon}>
+        <Icon
+          name="arrow-left"
+          type="feather"
+          size={24}
+          color="black"
+          onPress={() => navigation.goBack()}
+        />
+      </View>
+
+      <View style={styles.secondrow}>
+        <View style={styles.vegContainer}>
+          <View style={styles.square}>
+            <View style={styles.circle} />
+          </View>
+          <Text style={styles.vegText}>Pure Vegetarian</Text>
+        </View>
+
+        <View style={styles.ratings}>
+          <Text style={styles.ratingText}>4.7</Text>
+          <Icon
+            name="star"
+            type="feather"
+            color="white"
+            size={18}
+            style={styles.starIcon}
+          />
+        </View>
+      </View>
+      <View>
+        <Text style={styles.headertext}>SA Dosa cafe-South indian</Text>
+      </View>
+      <View style={styles.thirdrow}>
+        <Text>2.5 Km</Text>
+        <Text>Viman nagar</Text>
+        <TouchableOpacity style={styles.bookatablebutton}>
+          <Text style={{ color: "white", fontWeight: "bold" }}>
+            Book a Table
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.fourthrow}>
+        <View style={styles.searchbar}>
+          <Icon name="search" style={{ paddingLeft: wp("3%") }} />
+          <TextInput
+            style={styles.searchinput}
+            placeholder="Search for dishes"
+          />
+        </View>
+        <TouchableOpacity style={styles.reviewbutton}>
+          <Text style={{ color: "white", fontWeight: "bold" }}>Add review</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.horizontalWrapper}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.horizontalScroll}
+        >
+          <TouchableOpacity style={styles.categoryButton}>
+            <Text style={styles.categoryText}>All</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.categoryButton}>
+            <Text style={styles.categoryText}>Popular</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.categoryButton}>
+            <Text style={styles.categoryText}>South Indian</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.categoryButton}>
+            <Text style={styles.categoryText}>Chinese</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.categoryButton}>
+            <Text style={styles.categoryText}>Desserts</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+      <View style={styles.topratedsection}>
+        <Text style={styles.topPicksHeading}>Top Picks</Text>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.topPicksContainer}
+        >
+          {topPicks.map((dish, index) => (
+            <DishCard key={index} {...dish} />
+          ))}
+        </ScrollView>
+      </View>
+      <View style={styles.recommendedSection}>
+        <Text style={styles.recommendedHeading}>Recommended</Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {recommendedDishes.map((dish, index) => (
+            <View key={index} style={styles.recommendedItem}>
+              <View style={styles.vegIcon}>
+                <View style={styles.vegSquare}>
+                  <View style={styles.vegDot} />
+                </View>
+              </View>
+
+              <View style={styles.textContainer}>
+                <Text style={styles.itemTitle}>{dish.title}</Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    width: "100%",
+                  }}
+                >
+                  <Text style={styles.itemDescription}>{dish.description}</Text>
+                </View>
+              </View>
+
+              <Image
+                source={{ uri: dish.image }}
+                style={styles.recommendedImage}
+              />
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingHorizontal: wp("4%"),
+  },
+  icon: {
+    marginRight: "auto",
+    marginTop: hp("5%"),
+  },
+  secondrow: {
+    marginTop: hp("3%"),
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  vegContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: wp("2%"),
+  },
+  square: {
+    width: wp("6%"),
+    height: wp("6%"),
+    backgroundColor: "#ebebeb",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: "green",
+  },
+  circle: {
+    width: wp("3%"),
+    height: wp("3%"),
+    backgroundColor: "#14cd07",
+    borderRadius: 50,
+    alignSelf: "center",
+  },
+  vegText: {
+    fontSize: hp("2%"),
+    color: "black",
+  },
+  ratings: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#14cd07",
+    padding: wp("0.7%"),
+    borderRadius: wp("1%"),
+  },
+  ratingText: {
+    fontSize: hp("2.2%"),
+    fontWeight: "bold",
+    color: "#333",
+    marginRight: wp("1%"),
+  },
+  starIcon: {
+    marginTop: 2,
+  },
+  headertext: {
+    fontSize: hp("3%"),
+    fontWeight: "bold",
+    marginTop: hp("1.4%"),
+  },
+  thirdrow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: hp("1%"),
+  },
+  bookatablebutton: {
+    backgroundColor: "#14cd07",
+    paddingVertical: wp("2%"),
+    paddingHorizontal: wp("6%"),
+    borderRadius: wp("2%"),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  fourthrow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: hp("1%"),
+  },
+  reviewbutton: {
+    backgroundColor: "#14cd07",
+    paddingVertical: wp("2%"),
+    paddingHorizontal: wp("6%"),
+    borderRadius: wp("2%"),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  searchbar: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor:"#e5e5e57c",
+    width: wp("55%"),  
+    borderRadius:wp("3%")
+  },
+  horizontalScroll: {
+    marginTop: hp("2%"),
+    flexDirection: "row",
+    height: hp("4%"),
+    alignItems: "center",
+  },
+  categoryButton: {
+    backgroundColor: "#f0f0f0",
+    paddingVertical: hp("0.5%"),
+    paddingHorizontal: wp("5%"),
+    borderRadius: wp("2%"),
+    marginRight: wp("2%"),
+    justifyContent: "center", 
+    alignItems: "center",
+  },
+  categoryText: {
+    fontSize: hp("2%"),
+    fontWeight: "bold",
+    color: "#333",
+  },
+  
+  topratedsection: {
+    marginTop: hp("2%"),
+  
+  },
+  topPicksHeading: {
+    fontSize: hp("2.5%"),
+    fontWeight: "bold",
+    color: "black",
+    marginBottom: hp("1%"),
+  },
+  topPicksScroll: {
+    flexDirection: "row",
+    gap: wp("4%"),
+  },
+  foodCard: {
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    width: wp("45%"),
+    padding: wp("2%"),
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
+    overflow: "hidden",
+  },
+  foodImage: {
+    width: "100%",
+    height: hp("15%"),
+    borderRadius: 10,
+  },
+  foodDetails: {
+    paddingVertical: hp("1%"),
+  },
+  foodTitle: {
+    fontSize: hp("2%"),
+    fontWeight: "bold",
+    color: "#333",
+  },
+  foodDescription: {
+    fontSize: hp("1.5%"),
+    color: "#777",
+  },
+  foodPrice: {
+    fontSize: hp("2%"),
+    fontWeight: "bold",
+    color: "#000",
+    marginTop: hp("1%"),
+  },
+  section: {
+    padding: 16,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 16,
+  },
+  topPicksContainer: {
+    marginHorizontal: -16,
+    paddingHorizontal: 16,
+  },
+  dishCard: {
+    width: 280,
+    height: 180,
+    marginRight: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  dishImage: {
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
+    
+  },
+  vegIcon: {
+    marginBottom: 8,
+  },
+  vegSquare: {
+    width: 16,
+    height: 16,
+    borderWidth: 1,
+    borderColor: '#00A877',
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  vegDot: {
+    width: 8,
+    height: 8,
+    backgroundColor: '#00A877',
+    borderRadius: 4,
+  },
+  dishTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  dishDescription: {
+    fontSize: 12,
+    color: '#ffffff',
+    opacity: 0.8,
+    marginBottom: 8,
+  },
+  dishPrice: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  recommendedSection: {
+    paddingTop: hp("2%"),
+   
+  },
+  recommendedHeading: {
+    fontSize: wp("5%"),
+    fontWeight: "bold",
+    marginBottom: hp("1%"),
+  },
+  recommendedItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+    padding:wp("4%"),
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E6DED9",
+  },
+  
+  vegIcon: {
+    width: 20,
+    height: 20,
+    borderWidth: 1,
+    borderColor: "#00A877",
+    backgroundColor: "transparent",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 4,
+    marginRight: 8,
+  },
+  
+  vegDot: {
+    width: 10,
+    height: 10,
+    backgroundColor: "#00A877",
+    borderRadius: 5,
+  },
+  
+  textContainer: {
+    flex: 1,
+    justifyContent: "center",
+    maxWidth: "70%", 
+  },
+  
+  itemTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  
+  itemDescription: {
+    fontSize: 12,
+    color: "#777",
+    lineHeight: 16,
+    maxWidth: "70%",  // Allowing text to take up to 70% of the width
+    flexShrink: 1,
+    flexWrap: "wrap",
+    textAlign: "left",
+  },
+  
+  
+  
+  
+  recommendedImage: {
+    width: wp("25%"),
+    height: wp("30%"),
+    borderRadius: 12,
+  },
+  
+  
+});
+
+export default Fooddetails

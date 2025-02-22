@@ -8,8 +8,12 @@ import Traintrackingscreen from "./components/Traintracking/traintracking";
 import Places from "./components/Placestovisit/places";
 import Shopping from "./components/shopping/shopping";
 import FoodHome from "./components/Foods/FoodHome";
-import Footer from "./components/Footer";
 import HomeScreen from "./components/Homepage/Homepage";
+import Footer from "./components/Footer"
+import ThingsToCarry from "./components/Thingstocarrry/things"
+import Bookings from "./components/Mybookings/Bookings"
+import Profilescreen from "./components/profile/profilepage";
+import Fooddetails from "./components/Fooddetails/Fooddetails";
 import Overview from "./components/Activities/Overview";
 import DetailedScreen from "./components/Activities/DetailedScreen";
 import BookASlot from "./components/Activities/BookASlot";
@@ -23,10 +27,10 @@ function HomeScreenWithFooter({ navigation }) {
     </View>
   );
 }
-function ActiviesOverview() {
+function ActiviesOverview({navigation}) {
   return (
     <View style={{ flex: 1 }}>
-      <Overview />
+      <Overview navigation={navigation} />
       <Footer />
     </View>
   );
@@ -63,6 +67,14 @@ function FoodHomewithfooter({ navigation }) {
     </View>
   );
 }
+function ThingsToCarrywithfooter({navigation}){
+  return (
+    <View style={{ flex: 1 }}>
+      <ThingsToCarry navigation={navigation} />
+      <Footer />
+      </View>
+
+     ) }
 function MountainIndetail() {
   return (
     <View style={{ flex: 1 }}>
@@ -71,6 +83,24 @@ function MountainIndetail() {
     </View>
   );
 }
+function Mybookingswithfooter({navigation}){
+  return (
+    <View style={{ flex: 1 }}>
+      <Bookings navigation={navigation} />
+      <Footer />
+    </View>
+  );
+}
+function Profilescreenwithfooter({navigation}){
+  return (
+    <View style={{ flex: 1 }}>
+      <Profilescreen navigation={navigation} />
+      <Footer />
+    </View>
+  );
+}
+
+
 function SlotBooking() {
   return (
     <View style={{ flex: 1 }}>
@@ -110,6 +140,10 @@ export default function App() {
         <Stack.Screen name="Places" component={Placesscreenwithfooter} />
         <Stack.Screen name="Shopping" component={Shoppingwithfooter} />
         <Stack.Screen name="Food" component={FoodHomewithfooter} />
+        <Stack.Screen name="Things" component={ThingsToCarrywithfooter} />
+        <Stack.Screen name="Mybookings" component={Mybookingswithfooter} />
+        <Stack.Screen name="Profile" component={Profilescreenwithfooter} />
+        <Stack.Screen name="Fooddetails" component={Fooddetails} />
         <Stack.Screen name="Activities" component={ActiviesOverview} />
         <Stack.Screen name="DetailedScreen" component={MountainIndetail} />
         <Stack.Screen name="SlotBooking" component={SlotBooking} />

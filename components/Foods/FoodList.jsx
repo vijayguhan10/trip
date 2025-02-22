@@ -6,6 +6,7 @@ import {
   FlatList,
   StyleSheet,
   ScrollView,
+  TouchableOpacity
 } from "react-native";
 import { Avatar, Button, Card } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -99,7 +100,7 @@ const restaurants = [
   },
 ];
 
-const FoodList = () => {
+const FoodList = ({navigation}) => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.heading}>Dine Anytime!</Text>
@@ -121,6 +122,7 @@ const FoodList = () => {
         data={restaurants}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => navigation.navigate("Fooddetails", { restaurant: item })}>
           <Card style={styles.card}>
             <Card.Cover source={{ uri: item.image }} style={styles.cardImage} />
             <View style={styles.discountBadge}>
@@ -179,6 +181,8 @@ const FoodList = () => {
               </View>
             </Card.Content>
           </Card>
+          </TouchableOpacity>
+
         )}
       />
     </ScrollView>

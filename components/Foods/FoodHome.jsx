@@ -14,11 +14,11 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-const FoodHome = () => {
+const FoodHome = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Header />
-      <FoodList />
+      <FoodList navigation={navigation}/>
     </View>
   );
 };
