@@ -13,6 +13,7 @@ import Footer from "./components/Footer"
 import ThingsToCarry from "./components/Thingstocarrry/things"
 import Bookings from "./components/Mybookings/Bookings"
 import Profilescreen from "./components/profile/profilepage";
+import Activities from "./components/musttryactivity/page"
 const Stack = createStackNavigator();
 
 function HomeScreenWithFooter({ navigation }) {
@@ -79,6 +80,14 @@ function Profilescreenwithfooter({navigation}){
     </View>
   );
 }
+function Activitieswithfooter({navigation}){
+  return (
+    <View style={{ flex: 1 }}>
+      <Activities navigation={navigation} />
+      <Footer />
+    </View>
+  );
+}
 export default function App() {
   const [fontsLoaded] = useFonts({
     Noir_Regular: require("./fonts/Noir_regular.otf"),
@@ -103,6 +112,7 @@ export default function App() {
         <Stack.Screen name="Things" component={ThingsToCarrywithfooter} />
         <Stack.Screen name="Mybookings" component={Mybookingswithfooter} />
         <Stack.Screen name="Profile" component={Profilescreenwithfooter} />
+        <Stack.Screen name="Activity" component={Activitieswithfooter} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>

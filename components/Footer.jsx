@@ -35,11 +35,10 @@ const Footer = () => {
   );
 };
 
-// Define menu items with navigation screens
 const menuItems = [
   { name: "home", type: "material", screen: "Home" }, // Navigate to Home
   { name: "restaurant", type: "material", screen: "Food" }, // Navigate to Food
-  { name: "money", type: "material" }, // No navigation for now
+  { name: "money", type: "material",screen:"Activity" }, // No navigation for now
   { name: "currency-rupee", type: "material" }, // No navigation for now
 ];
 
