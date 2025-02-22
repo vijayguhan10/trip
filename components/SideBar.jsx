@@ -69,7 +69,7 @@ const menuItems = [
   { label: "Shopping", icon: "shopping-bag", type: "feather", screen: "Shopping" },
   { label: "Things to Carry", icon: "fastfood", type: "material-community", screen: "Things" },
   { label: "My Bookings", icon: "calendar", type: "feather", screen: "Mybookings" },
-  { label: "My Profile", icon: "user", type: "feather", screen: "Home" },
+  { label: "My Profile", icon: "user", type: "feather", screen: "Profile" },
 ];
 const styles = StyleSheet.create({
   container: {
