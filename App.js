@@ -17,6 +17,7 @@ import Fooddetails from "./components/Fooddetails/Fooddetails";
 import Overview from "./components/Activities/Overview";
 import DetailedScreen from "./components/Activities/DetailedScreen";
 import BookASlot from "./components/Activities/BookASlot";
+import OnboardingScreen from "./components/Landingpage/Landingpage";
 const Stack = createStackNavigator();
 
 function HomeScreenWithFooter({ navigation }) {
@@ -147,6 +148,7 @@ export default function App() {
         <Stack.Screen name="Activities" component={ActiviesOverview} />
         <Stack.Screen name="DetailedScreen" component={MountainIndetail} />
         <Stack.Screen name="SlotBooking" component={SlotBooking} />
+        <Stack.Screen name="Landingpage" component={OnboardingScreen} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
