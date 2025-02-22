@@ -28,12 +28,12 @@ const recommendedDishes = [
     description: "Idli is a traditional South Indian dish made from fermented rice and urad dal (black gram) batter, steamed into soft, fluffy cakes.",
   },
   {
-    image: "https://images.unsplash.com/photo-1626010742377-4669b753f8ec?w=100&h=100&fit=crop",
+    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop",
     title: "Medu Wada",
     description: "Medu Wada is a South Indian doughnut-shaped fritter made with urad dal, crispy on the outside and soft inside.",
   },
   {
-    image: "https://images.unsplash.com/photo-1626010742377-4669b753f8ec?w=100&h=100&fit=crop",
+    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop",
     title: "Medu Wada",
     description: "Medu Wada is a South Indian doughnut-shaped fritter made with urad dal, crispy on the outside and soft inside.",
   },
@@ -59,8 +59,8 @@ const DishCard = ({ image, title, description, price }) => (
 );
 const Fooddetails = ({ navigation }) => {
   return (
-<ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-<View style={styles.icon}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <View style={styles.icon}>
         <Icon
           name="arrow-left"
           type="feather"
@@ -152,26 +152,32 @@ const Fooddetails = ({ navigation }) => {
       <View style={styles.recommendedSection}>
         <Text style={styles.recommendedHeading}>Recommended</Text>
         <ScrollView showsVerticalScrollIndicator={false}>
-        {recommendedDishes.map((dish, index) => (
-          <View key={index} style={styles.recommendedItem}>
-          <View style={styles.vegIcon}>
-            <View style={styles.vegSquare}>
-              <View style={styles.vegDot} />
-            </View>
-          </View>
-        
-          <View style={styles.textContainer}>
-            <Text style={styles.itemTitle}>{dish.title}</Text>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", width: "100%" }}>
-  <Text style={styles.itemDescription}>{dish.description}</Text>
-</View>
+          {recommendedDishes.map((dish, index) => (
+            <View key={index} style={styles.recommendedItem}>
+              <View style={styles.vegIcon}>
+                <View style={styles.vegSquare}>
+                  <View style={styles.vegDot} />
+                </View>
+              </View>
 
-          </View>
-        
-          <Image source={{ uri: dish.image }} style={styles.recommendedImage} />
-        </View>
-        
-         
+              <View style={styles.textContainer}>
+                <Text style={styles.itemTitle}>{dish.title}</Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    width: "100%",
+                  }}
+                >
+                  <Text style={styles.itemDescription}>{dish.description}</Text>
+                </View>
+              </View>
+
+              <Image
+                source={{ uri: dish.image }}
+                style={styles.recommendedImage}
+              />
+            </View>
           ))}
         </ScrollView>
       </View>
@@ -478,8 +484,8 @@ const styles = StyleSheet.create({
   
   
   recommendedImage: {
-    width: 60,
-    height: 60,
+    width: wp("25%"),
+    height: wp("30%"),
     borderRadius: 12,
   },
   

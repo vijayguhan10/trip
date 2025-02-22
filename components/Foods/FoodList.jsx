@@ -6,10 +6,14 @@ import {
   FlatList,
   StyleSheet,
   ScrollView,
+  TouchableOpacity
 } from "react-native";
 import { Avatar, Button, Card } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 const categories = [
   {
     id: "1",
@@ -37,14 +41,14 @@ const restaurants = [
   {
     id: "1",
     name: "Chai Point",
-    image:"https://s3-alpha-sig.figma.com/img/08d2/2162/5813d538f9c3792f884fee9c99bddd9f?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=tW1jQ6U4IpdbpYfIHntWrD6ayUYiaG94nyFwCTepTPcr3FzeUYxO6IHG52iACTUnriT38TCpeojUPDu79uLKh459w62oezbixXV2Zw2m4Dg0SA5eKgRN6VPPAblwUyMYdMdBJFC--obms14n1TGK6-D4~ig6vCZ6swQb0aFNn9jq3IL3etYMmIYZB96LWSMYKjup6ASKcmtO9nFGebFNkKgvTZFn-FHIDgEH6Wn7DFQAg5KmOAOejuY1Un5M~If0VEsIlDLws4dhdFgtcusIu1isfB6lR2WNULj6cLPmM74IjPK1iibW7ldLYmCvvByIMV53PZQnQJyhD26cDqIEew__",
+    image:
+      "https://s3-alpha-sig.figma.com/img/08d2/2162/5813d538f9c3792f884fee9c99bddd9f?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=tW1jQ6U4IpdbpYfIHntWrD6ayUYiaG94nyFwCTepTPcr3FzeUYxO6IHG52iACTUnriT38TCpeojUPDu79uLKh459w62oezbixXV2Zw2m4Dg0SA5eKgRN6VPPAblwUyMYdMdBJFC--obms14n1TGK6-D4~ig6vCZ6swQb0aFNn9jq3IL3etYMmIYZB96LWSMYKjup6ASKcmtO9nFGebFNkKgvTZFn-FHIDgEH6Wn7DFQAg5KmOAOejuY1Un5M~If0VEsIlDLws4dhdFgtcusIu1isfB6lR2WNULj6cLPmM74IjPK1iibW7ldLYmCvvByIMV53PZQnQJyhD26cDqIEew__",
     rating: "3.7",
     description: "Tea • Coffee • 200 for one",
     location: "Viman nagar",
     distance: "0.7 Km",
     time: "30 mins Away",
     discount: "50% Off",
-    
   },
   {
     id: "2",
@@ -96,7 +100,7 @@ const restaurants = [
   },
 ];
 
-const FoodList = () => {
+const FoodList = ({navigation}) => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.heading}>Dine Anytime!</Text>
@@ -118,6 +122,7 @@ const FoodList = () => {
         data={restaurants}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => navigation.navigate("Fooddetails", { restaurant: item })}>
           <Card style={styles.card}>
             <Card.Cover source={{ uri: item.image }} style={styles.cardImage} />
             <View style={styles.discountBadge}>
@@ -176,42 +181,50 @@ const FoodList = () => {
               </View>
             </Card.Content>
           </Card>
+          </TouchableOpacity>
+
         )}
       />
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF6F6", padding: 10 },
-  heading: { fontSize: 22, fontWeight: "bold" },
-  subHeading: { fontSize: 18, fontWeight: "bold", marginTop: 10 },
-  categoryItem: { alignItems: "center", marginRight: 15 },
-  categoryIcon: { width: 70, height: 70, borderRadius: 15 },
-  card: { marginVertical: 10, borderRadius: 10 },
-  cardImage: { height: 150, borderTopLeftRadius: 10, borderTopRightRadius: 10 },
-  title: { fontSize: 16, fontWeight: "bold" },
+  container: { flex: 1, backgroundColor: "#FFF6F6", padding: wp("3%") },
+  heading: { fontSize: wp("6%"), fontWeight: "bold" },
+  subHeading: {
+    fontSize: wp("4.5%"),
+    fontWeight: "bold",
+    marginTop: hp("1.5%"),
+  },
+  categoryItem: { alignItems: "center", marginRight: wp("4%") },
+  categoryIcon: { width: wp("18%"), height: wp("18%"), borderRadius: wp("4%") },
+  card: { marginVertical: hp("3%"), borderRadius: wp("3%") },
+  cardImage: {
+    height: hp("20%"),
+    borderTopLeftRadius: wp("3%"),
+    borderTopRightRadius: wp("3%"),
+  },
+  title: { fontSize: wp("4%"), fontWeight: "bold" },
   ratings: {
     backgroundColor: "rgb(14, 184, 121)",
-    width: 50,
-    borderRadius: 5,
+    width: wp("12%"),
+    borderRadius: wp("2%"),
     color: "white",
     textAlign: "center",
   },
-  infoRow: { flexDirection: "row", alignItems: "center", marginTop: 6 },
+  infoRow: { flexDirection: "row", alignItems: "center", marginTop: hp("1%") },
   discountBadge: {
     position: "absolute",
-    top: -13,
-    right: 10,
-    bottom: 20,
+    top: hp("-1.7%"),
+    right: wp("3%"),
+    bottom: hp("2.5%"),
     backgroundColor: "rgba(228, 27, 27, 0.87)",
-    padding: 5,
-    borderRadius: 500,
-    height: 50,
-    width: 50,
+    padding: wp("1.5%"),
+    borderRadius: wp("12%"),
+    height: wp("12%"),
+    width: wp("12%"),
     textAlign: "center",
   },
   discountText: { color: "white", fontWeight: "bold" },
 });
-
 export default FoodList;

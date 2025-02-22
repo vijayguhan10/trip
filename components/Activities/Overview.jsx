@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet,TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useState } from 'react';
@@ -61,7 +61,7 @@ const activities = [
   },
 ];
 
-function ActivityCard({ activity }) {
+function ActivityCard({ activity,navigation }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const handleScroll = (event) => {
@@ -83,12 +83,17 @@ function ActivityCard({ activity }) {
           scrollEventThrottle={16}
         >
           {activity.images.map((image, index) => (
+             <TouchableOpacity
+             key={index}
+             onPress={() => navigation.navigate('DetailedScreen', { activity })}
+           >
             <Image
               key={index}
               source={{ uri: image }}
               style={styles.image}
               resizeMode="cover"
             />
+              </TouchableOpacity>
           ))}
         </ScrollView>
         <View style={styles.imageIndicators}>
@@ -117,7 +122,7 @@ function ActivityCard({ activity }) {
   );
 }
 
-export default function Activities() {
+export default function Overview({navigation}) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -134,7 +139,7 @@ export default function Activities() {
         contentContainerStyle={{paddingBottom:hp("5%")}}
       >
         {activities.map(activity => (
-          <ActivityCard key={activity.id} activity={activity} />
+          <ActivityCard key={activity.id} activity={activity} navigation={navigation}/>
         ))}
       </ScrollView>
     </View>
