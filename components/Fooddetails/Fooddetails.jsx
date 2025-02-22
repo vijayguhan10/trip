@@ -94,7 +94,7 @@ const Fooddetails = ({ navigation }) => {
       <View style={styles.thirdrow}>
         <Text>2.5 Km</Text>
         <Text>Viman nagar</Text>
-        <TouchableOpacity style={styles.bookatablebutton}>
+        <TouchableOpacity style={styles.bookatablebutton} onPress={()=>navigation.navigate("Booktable")}>
           <Text style={{ color: "white", fontWeight: "bold" }}>
             Book a Table
           </Text>

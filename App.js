@@ -18,6 +18,7 @@ import Overview from "./components/Activities/Overview";
 import DetailedScreen from "./components/Activities/DetailedScreen";
 import BookASlot from "./components/Activities/BookASlot";
 import OnboardingScreen from "./components/Landingpage/Landingpage";
+import Booktable from "./components/Fooddetails/Booktable"
 const Stack = createStackNavigator();
 
 function HomeScreenWithFooter({ navigation }) {
@@ -101,7 +102,22 @@ function Profilescreenwithfooter({navigation}){
   );
 }
 
-
+function Fooddetailswithfooter({navigation}){
+  return (
+    <View style={{ flex: 1 }}>
+      <Fooddetails navigation={navigation} />
+      <Footer />
+    </View>
+  );
+}
+function Booktablewithfooter({navigation}){
+  return (
+    <View style={{ flex: 1 }}>
+      <Booktable navigation={navigation} />
+      <Footer />
+    </View>
+  );
+}
 function SlotBooking() {
   return (
     <View style={{ flex: 1 }}>
@@ -144,7 +160,8 @@ export default function App() {
         <Stack.Screen name="Things" component={ThingsToCarrywithfooter} />
         <Stack.Screen name="Mybookings" component={Mybookingswithfooter} />
         <Stack.Screen name="Profile" component={Profilescreenwithfooter} />
-        <Stack.Screen name="Fooddetails" component={Fooddetails} />
+        <Stack.Screen name="Fooddetails" component={Fooddetailswithfooter} />
+        <Stack.Screen name="Booktable" component={Booktablewithfooter} />
         <Stack.Screen name="Activities" component={ActiviesOverview} />
         <Stack.Screen name="DetailedScreen" component={MountainIndetail} />
         <Stack.Screen name="SlotBooking" component={SlotBooking} />
