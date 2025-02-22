@@ -1,10 +1,11 @@
 
 
 
-import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity,ScrollView,Image} from 'react-native'
+import React,{useState}  from 'react'
+import { View, Text, StyleSheet, TouchableOpacity,ScrollView,Image,Modal,TextInput} from 'react-native'
 import { Icon } from 'react-native-elements'
-import { TextInput } from 'react-native-gesture-handler'
+import { Ionicons } from "@expo/vector-icons"; 
+
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen'
 const topPicks = [
   {
@@ -58,7 +59,10 @@ const DishCard = ({ image, title, description, price }) => (
   </TouchableOpacity>
 );
 const Fooddetails = ({ navigation }) => {
-  return (
+  const [modalVisible, setModalVisible] = useState(false);
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [reviewText, setReviewText] = useState("");
+    return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.icon}>
         <Icon
@@ -108,7 +112,7 @@ const Fooddetails = ({ navigation }) => {
             placeholder="Search for dishes"
           />
         </View>
-        <TouchableOpacity style={styles.reviewbutton}>
+        <TouchableOpacity style={styles.reviewbutton} onPress={() => setModalVisible(true)}>
           <Text style={{ color: "white", fontWeight: "bold" }}>Add review</Text>
         </TouchableOpacity>
       </View>
@@ -190,6 +194,41 @@ const Fooddetails = ({ navigation }) => {
           ))}
         </ScrollView>
       </View>
+      <Modal visible={modalVisible} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+              <Icon name="close" size={15} color="white" />
+            </TouchableOpacity>
+
+            <Text style={styles.modalTitle}>Add Review</Text>
+
+            <Text style={styles.inputLabel}>Title</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter review title..."
+              placeholderTextColor="#999"
+              value={reviewTitle}
+              onChangeText={setReviewTitle}
+            />
+
+            <Text style={styles.inputLabel}>Description</Text>
+            <TextInput
+              style={[styles.input, styles.descriptionInput]}
+              placeholder="Write your review..."
+              placeholderTextColor="#999"
+              value={reviewText}
+              onChangeText={setReviewText}
+              multiline
+              numberOfLines={5}
+            />
+
+            <TouchableOpacity style={styles.submitButton}>
+              <Text style={styles.submitButtonText}>Add Review</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -487,7 +526,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#777",
     lineHeight: 16,
-    maxWidth: "70%", // Allowing text to take up to 70% of the width
+    maxWidth: "70%", 
     flexShrink: 1,
     flexWrap: "wrap",
     textAlign: "left",
@@ -497,6 +536,64 @@ const styles = StyleSheet.create({
     width: wp("25%"),
     height: wp("30%"),
     borderRadius: 12,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContainer: {
+    width: wp("90%"),
+    backgroundColor: "white",
+    padding: wp("5%"),
+    borderRadius: wp("3%"),
+    alignItems: "center",
+    position: "relative",
+  },
+  closeButton: {
+    position: "absolute",
+    top: hp("1.5%"),
+    right: wp("3%"),
+    backgroundColor: "red",
+    borderRadius: wp("5%"),
+    padding: wp("2%"),
+  },
+  modalTitle: {
+    fontSize: hp("2.5%"),
+    fontWeight: "bold",
+    marginBottom: hp("2%"),
+  },
+  inputLabel: {
+    alignSelf: "flex-start",
+    fontSize: hp("2%"),
+    fontWeight: "bold",
+    marginBottom: hp("1%"),
+    color: "#444",
+  },
+  input: {
+    width: "100%",
+    backgroundColor: "#f5f5f5",
+    padding: hp("2%"),
+    borderRadius: wp("2%"),
+    fontSize: hp("2%"),
+    marginBottom: hp("2%"),
+  },
+  descriptionInput: {
+    height: hp("15%"),
+    textAlignVertical: "top",
+  },
+  submitButton: {
+    backgroundColor: "rgba(0, 208, 132, 1)",
+    padding: hp("2%"),
+    borderRadius: wp("3%"),
+    width: "100%",
+    alignItems: "center",
+  },
+  submitButtonText: {
+    color: "white",
+    fontSize: hp("2%"),
+    fontWeight: "bold",
   },
 });
 
