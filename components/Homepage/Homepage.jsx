@@ -18,8 +18,8 @@ import Sidebar from "../SideBar";
 
 const HomeScreen = () => {
   const [fontsLoaded] = useFonts({
-    Noir_Regular: require("../../fonts/Noir_regular.otf"),
-    Noir_Bold:require("../../fonts/Noir_regular.otf"),
+    Noir_Regular: require("../../assets/fonts/noir.ttf"),
+    Noir_Bold: require("../../assets/fonts/noir.ttf"),
   });
 
   if (!fontsLoaded) {
@@ -93,7 +93,6 @@ const HomeScreen = () => {
           {/* Top Destinations */}
           <Text style={styles.sectionTitle}>Top Destinations</Text>
           <ScrollView nestedScrollEnabled={true} style={styles.container}>
-            {/* Horizontal ScrollView for Destinations */}
             <View>
               <ScrollView
                 horizontal
@@ -134,7 +133,6 @@ const HomeScreen = () => {
           </ScrollView>
         </View>
 
-        {/* Sidebar */}
         {isSidebarOpen && <Sidebar isSidebarOpen={isSidebarOpen} />}
       </View>
     </TouchableWithoutFeedback>
@@ -190,7 +188,7 @@ const styles = StyleSheet.create({
     fontSize: wp("6%"),
     fontWeight: "light",
     textAlign: "center",
-    marginLeft:wp("3%"),
+    marginLeft: wp("3%"),
   },
   weatherContainer: {
     alignItems: "center",

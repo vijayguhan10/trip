@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import { Icon } from "react-native-elements";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const Footer = () => {
-  const [activeIcon, setActiveIcon] = useState("home");
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
+  const route = useRoute(); // Get the current route
 
   return (
     <View style={styles.bottomNavigation}>
@@ -14,20 +14,17 @@ const Footer = () => {
           key={item.name}
           style={[
             styles.iconContainer,
-            activeIcon === item.name && styles.activeIcon,
+            route.name === item.screen && styles.activeIcon, // Highlight based on route
           ]}
           onPress={() => {
-            setActiveIcon(item.name);
-            if (item.screen) {
-              navigation.navigate(item.screen);
-            }
+            navigation.navigate(item.screen);
           }}
         >
           <Icon
             name={item.name}
             type={item.type}
             size={30}
-            color={activeIcon === item.name ? "#fff" : "#444"}
+            color={route.name === item.screen ? "#fff" : "#444"} // Change icon color
           />
         </TouchableOpacity>
       ))}
@@ -37,10 +34,10 @@ const Footer = () => {
 
 // Define menu items with navigation screens
 const menuItems = [
-  { name: "home", type: "material", screen: "Home" }, // Navigate to Home
-  { name: "restaurant", type: "material", screen: "Food" }, // Navigate to Food
-  { name: "money", type: "material" }, // No navigation for now
-  { name: "currency-rupee", type: "material" }, // No navigation for now
+  { name: "home", type: "material", screen: "Home" },
+  { name: "restaurant", type: "material", screen: "Food" },
+  { name: "money", type: "material", screen: "Activities" },
+  { name: "currency-rupee", type: "material", screen: "Payments" },
 ];
 
 const { width } = Dimensions.get("window");
