@@ -14,6 +14,7 @@ import ThingsToCarry from "./components/Thingstocarrry/things"
 import Bookings from "./components/Mybookings/Bookings"
 import Profilescreen from "./components/profile/profilepage";
 import Activities from "./components/musttryactivity/page"
+import Fooddetails from "./components/Fooddetails/Fooddetails";
 const Stack = createStackNavigator();
 
 function HomeScreenWithFooter({ navigation }) {
@@ -113,6 +114,7 @@ export default function App() {
         <Stack.Screen name="Mybookings" component={Mybookingswithfooter} />
         <Stack.Screen name="Profile" component={Profilescreenwithfooter} />
         <Stack.Screen name="Activity" component={Activitieswithfooter} />
+        <Stack.Screen name="Fooddetails" component={Fooddetails} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
