@@ -18,8 +18,7 @@ import Sidebar from "../SideBar";
 
 const HomeScreen = () => {
   const [fontsLoaded] = useFonts({
-    Noir_Regular: require("../../assets/fonts/noir.ttf"),
-    Noir_Bold: require("../../assets/fonts/noir.ttf"),
+    Noir_Regular: require("../../assets/fonts/Comfortaa-VariableFont_wght.ttf"),
   });
 
   if (!fontsLoaded) {
@@ -161,7 +160,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
-    fontFamily: "Nunito_Regular",
+    fontFamily: "Noir_Regular",
   },
   header: {
     flexDirection: "row",
