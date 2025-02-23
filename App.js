@@ -19,6 +19,7 @@ import DetailedScreen from "./components/Activities/DetailedScreen";
 import BookASlot from "./components/Activities/BookASlot";
 import OnboardingScreen from "./components/Landingpage/Landingpage";
 import Booktable from "./components/Fooddetails/Booktable"
+import Productscreen from "./components/Products/productscreen";
 const Stack = createStackNavigator();
 
 function HomeScreenWithFooter({ navigation }) {
@@ -118,6 +119,14 @@ function Booktablewithfooter({navigation}){
     </View>
   );
 }
+function Productscreenwithfooter({navigation}){
+  return (
+    <View style={{ flex: 1 }}>
+      <Productscreen navigation={navigation} />
+      <Footer />
+    </View>
+  );
+}
 function SlotBooking() {
   return (
     <View style={{ flex: 1 }}>
@@ -166,6 +175,7 @@ export default function App() {
         <Stack.Screen name="DetailedScreen" component={MountainIndetail} />
         <Stack.Screen name="SlotBooking" component={SlotBooking} />
         <Stack.Screen name="Landingpage" component={OnboardingScreen} />
+        <Stack.Screen name="Products" component={Productscreenwithfooter} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
