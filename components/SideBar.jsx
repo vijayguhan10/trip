@@ -12,7 +12,9 @@ const Sidebar = ({ isSidebarOpen }) => {
     <View style={[styles.container, { width: isSidebarOpen ? wp("80%") : 0 }]}>
       <View style={styles.header}>
         <Image
-          source={{ uri: "https://your-image-url.com" }}
+          source={{
+            uri: "https://s3-alpha-sig.figma.com/img/44b3/9dae/f7b8d9642d79c4d7aa93f9b95ca7a006?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=VbWRgFdKRgubmu4OCPj40WLsnzqhAOym7l-qC34kfgGWTOpKb4wny2X8bI~P04jxYprVcVUbDUtxFFqkOz6JGiKhbCzWTb~RZLInR~ex0fZd~Y5vJ~~YuePtIBoROXfUgAuHVcF84l-JjLsUzNCP7-DBifgICfsoQxoZ~W906MyT-SIwQ0hsQvapnk0azm~xZenRIz5oCNHPYxdnayXZNt-32j9fFKnrcsWvcGLZqP9CLkndE03fA11urIdA1Yl0QCFl3m4a-RSA3jR1YIX5RDC9UdyKxx07M5d9Tg1HHkB5LUFRBRs2TCrKPQAJ2paoAUV1oFakggEY7~CeYt8qOw__",
+          }}
           style={styles.profileImage}
         />
         <View>
@@ -22,7 +24,11 @@ const Sidebar = ({ isSidebarOpen }) => {
       </View>
       <View style={styles.menuContainer}>
         {menuItems.map((item, index) => (
-          <TouchableOpacity key={index} style={styles.menuItem}  onPress={() => navigation.navigate(item.screen)} >
+          <TouchableOpacity
+            key={index}
+            style={styles.menuItem}
+            onPress={() => navigation.navigate(item.screen)}
+          >
             <Icon
               name={item.icon}
               type={item.type}
@@ -43,15 +49,15 @@ const Sidebar = ({ isSidebarOpen }) => {
       <View style={styles.supportcontainerOuter}>
         <View style={styles.supportcontainer}>
           <View style={styles.iconWrapper}>
-            <Icon name="log-out" type="feather" size={hp("3%")} color="#000" />
+            <Icon name="user" type="feather" size={hp("3%")} color="#000" />
           </View>
-          <Text style={styles.logoutText}>Log out</Text>
+          <Text style={styles.supporttext}>Support</Text>
         </View>
         <View style={styles.supportcontainer}>
           <View style={styles.iconWrapper}>
-            <Icon name="log-out" type="feather" size={hp("3%")} color="#000" />
+            <Icon name="bell" type="feather" size={hp("3%")} color="#000" />
           </View>
-          <Text style={styles.logoutText}>Log out</Text>
+          <Text style={styles.notificationtext}>Notification</Text>
         </View>
       </View>
       <View style={styles.logoutButton}>
@@ -98,9 +104,11 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontWeight: "bold",
+    fontFamily:"LufgaItalic"
   },
   userEmail: {
     color: "gray",
+    fontFamily:"Noir_Regular"
   },
   menuContainer: {
     // flex: 1,
@@ -118,6 +126,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: hp("1.5%"),
     marginLeft: wp("4%"),
+    fontFamily:"LufgaMedium"
   },
   logoutButton: {
     flexDirection: "row",
@@ -153,6 +162,18 @@ const styles = StyleSheet.create({
   logoutText: {
     fontSize: hp("1.5%"),
     marginLeft: wp("3%"),
+    fontFamily:"LufgaMedium"
+  },
+  notificationtext: {
+    fontSize: hp("1.5%"),
+    marginLeft: wp("3%"),
+    fontFamily:"LufgaRegular"
+  },
+  supporttext: {
+    fontSize: hp("1.5%"),
+    marginLeft: wp("3%"),
+    fontFamily:"LufgaRegular"
+
   },
 });
 

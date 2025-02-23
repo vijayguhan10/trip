@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     marginBottom: hp("1%"),
+    fontFamily:"Noir_Regular"
   },
   subtitle: {
     fontSize: wp("3.5%"),
