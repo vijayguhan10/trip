@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
-    fontFamily: "Nunito_Regular",
+    fontFamily: "Noir_Regular",
   },
   header: {
     flexDirection: "row",
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: wp("5%"),
     fontWeight: "light",
-    marginLeft: wp("5%"),
+    marginLeft: wp("5%"), 
     color: "grey",
     marginTop: hp("2%"),
     marginBottom: hp("2%"),

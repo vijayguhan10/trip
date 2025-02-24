@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   text: {
-    fontFamily: "    Noir_Regular",
+    fontFamily: "Noir_Regular",
     fontSize: 18,
   },
 });
