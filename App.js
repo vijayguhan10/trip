@@ -140,6 +140,7 @@ export default function App() {
     Noir_Regular: require("./assets/fonts/Comfortaa-VariableFont_wght.ttf"),
     Noir_Bold: require("./assets/fonts/noir.ttf"),
   
+    
     LufgaBlack: require("./assets/fonts/lufga/LufgaBlack.ttf"),
     LufgaBlackItalic: require("./assets/fonts/lufga/LufgaBlackItalic.ttf"),
     LufgaBold: require("./assets/fonts/lufga/LufgaBold.ttf"),
