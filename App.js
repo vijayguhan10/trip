@@ -20,6 +20,10 @@ import BookASlot from "./components/Activities/BookASlot";
 import OnboardingScreen from "./components/Landingpage/Landingpage";
 import Booktable from "./components/Fooddetails/Booktable"
 import Productscreen from "./components/Products/productscreen";
+// import { API_URL, SECRET_KEY } from '@env';
+
+// console.log(API_URL);
+
 const Stack = createStackNavigator();
 
 function HomeScreenWithFooter({ navigation }) {
