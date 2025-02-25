@@ -16,7 +16,7 @@ const Header = () => {
           containerStyle={styles.searchBarContainer}
           inputContainerStyle={styles.searchBarInput}
         />
-        <Text>Veg{"\n"}Mode</Text>
+        <Text style={styles.vegtext}>Veg{"\n"}Mode</Text>
         <Switch
           trackColor={{ false: "#767577", true: "#81b0ff" }}
           thumbColor={false ? "#f4f3f4" : "#f4f3f4"}
@@ -27,7 +27,7 @@ const Header = () => {
       </View>
       <View style={styles.Topbarcontainer}>
         <Text style={styles.Popularity}>#popular</Text>
-        <Text style={styles.Popularity}>#popular</Text>
+        <Text style={styles.Popularity}>#Nearby</Text>
         <Text style={styles.Popularity}>+</Text>
         <TouchableOpacity style={styles.button}>
           <Icon name="map" color="#FFF6F6" size={24} />
@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     color: "black",
     padding: wp("2.5%"),
     borderRadius: wp("2%"),
+    fontFamily:"LufgaMedium"
   },
   button: {
     height: hp("5%"),
@@ -90,6 +91,7 @@ const styles = StyleSheet.create({
   },
   LocationButton: {
     color: "white",
+    fontFamily:"LufgaRegular"
   },
   HeaderImage: {
     width: wp("96%"),
@@ -102,6 +104,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: wp("4%"),
     alignContent: "center",
   },
+  vegtext:{
+    fontFamily:"LufgaSemiBoldItalic"
+  }
 });
 
 export default Header;

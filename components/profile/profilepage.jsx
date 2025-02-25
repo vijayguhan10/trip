@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginLeft: wp("3%"),
     color: "#000",
+    fontFamily:"LufgaSemiBold"
   },
   profileContainer: {
     alignItems: "center",
@@ -78,6 +79,8 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: wp("7%"),
     fontWeight: "600",
+    fontFamily: "LufgaMedium",
+
   },
   top:{
 marginTop:hp("2%")
@@ -91,6 +94,7 @@ marginTop:hp("2%")
     paddingHorizontal: wp("4%"),
     marginVertical: hp("1%"),
     color: "#000",
+    fontFamily:"LufgaBold"
   },
   phoneContainer: {
     flexDirection: "row",

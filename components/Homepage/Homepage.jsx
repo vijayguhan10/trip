@@ -17,13 +17,7 @@ import {
 import Sidebar from "../SideBar";
 
 const HomeScreen = () => {
-  const [fontsLoaded] = useFonts({
-    Noir_Regular: require("../../assets/fonts/Comfortaa-VariableFont_wght.ttf"),
-  });
-
-  if (!fontsLoaded) {
-    return <Text>No fonts Loaded</Text>;
-  }
+  
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -146,7 +140,7 @@ const CategoryItem = ({ title }) => (
       }}
       style={styles.categoryImage}
     />
-    <Text>{title}</Text>
+    <Text style={styles.categorytitle}>{title}</Text>
   </TouchableOpacity>
 );
 
@@ -188,6 +182,7 @@ const styles = StyleSheet.create({
     fontWeight: "light",
     textAlign: "center",
     marginLeft: wp("3%"),
+    fontFamily:"LufgaSemiBold"
   },
   weatherContainer: {
     alignItems: "center",
@@ -198,8 +193,8 @@ const styles = StyleSheet.create({
   wetherLocation: {
     flexDirection: "column",
   },
-  locationText: { fontSize: wp("4%") },
-  DateText: { paddingLeft: wp("6%") },
+  locationText: { fontSize: wp("4%"),fontFamily:"Noir_Regular"},
+  DateText: { paddingLeft: wp("6%"),fontFamily:"LufgaLight" },
   weatherIcon: { width: wp("20%"), height: hp("6%") },
   WetherReport: {
     flexDirection: "column",
@@ -208,7 +203,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginLeft: wp("15%"),
   },
-  temperatureText: { fontSize: wp("5%"), fontWeight: "bold" },
+  temperatureText: { fontSize: wp("5%"), fontWeight: "bold",fontFamily:"LufgaItalic" },
   celcius: { fontSize: wp("2.5%"), position: "relative", bottom: hp("4%") },
   categoriesContainer: {
     flexDirection: "row",
@@ -218,7 +213,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: wp("5%"),
     fontWeight: "light",
-    marginLeft: wp("5%"),
+    marginLeft: wp("5%"), 
     color: "grey",
     marginTop: hp("2%"),
     marginBottom: hp("2%"),
@@ -228,6 +223,7 @@ const styles = StyleSheet.create({
     fontWeight: "light",
     marginLeft: wp("5%"),
     color: "grey",
+    fontFamily:"Noir_Regular"
   },
   destinationsContainer: {
     flexDirection: "row",
@@ -255,6 +251,7 @@ const styles = StyleSheet.create({
     color: "white",
     position: "relative",
     bottom: hp("3.5%"),
+    fontFamily:"LufgaItalic"
   },
   ActivityImage: {
     width: wp("90%"),
@@ -263,6 +260,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     resizeMode: "cover",
   },
+  categorytitle:{
+  fontFamily:"LufgaItalic"
+  }
 });
 
 export default HomeScreen;

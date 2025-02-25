@@ -11,7 +11,7 @@
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
-    },         
+    },
     "ios": {
       "supportsTablet": true
     },
@@ -37,6 +37,9 @@
     },
     "runtimeVersion": {
       "policy": "appVersion"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

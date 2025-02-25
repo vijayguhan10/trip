@@ -112,7 +112,7 @@ const FoodList = ({navigation}) => {
         renderItem={({ item }) => (
           <View style={styles.categoryItem}>
             <Image source={{ uri: item.icon }} style={styles.categoryIcon} />
-            <Text>{item.name}</Text>
+            <Text style={styles.categoryname}>{item.name}</Text>
           </View>
         )}
       />
@@ -190,13 +190,13 @@ const FoodList = ({navigation}) => {
 };
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FFF6F6", padding: wp("3%") },
-  heading: { fontSize: wp("6%"), fontWeight: "bold" },
+  heading: { fontSize: wp("6%"), fontFamily:"LufgaLightItalic"},
   subHeading: {
     fontSize: wp("4.5%"),
-    fontWeight: "bold",
+  fontFamily:"LufgaLightItalic",
     marginTop: hp("1.5%"),
   },
-  categoryItem: { alignItems: "center", marginRight: wp("4%") },
+  categoryItem: { alignItems: "center", marginRight: wp("4%"),marginTop:hp("3%") },
   categoryIcon: { width: wp("18%"), height: wp("18%"), borderRadius: wp("4%") },
   card: { marginVertical: hp("3%"), borderRadius: wp("3%") },
   cardImage: {
@@ -226,5 +226,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   discountText: { color: "white", fontWeight: "bold" },
+  categoryname:{
+    fontFamily:"LufgaLight",
+    marginTop:hp("1%")
+  }
 });
 export default FoodList;

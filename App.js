@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { useFonts } from "expo-font";
+import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { StyleSheet, View, ActivityIndicator, Text } from "react-native";
@@ -19,6 +19,11 @@ import DetailedScreen from "./components/Activities/DetailedScreen";
 import BookASlot from "./components/Activities/BookASlot";
 import OnboardingScreen from "./components/Landingpage/Landingpage";
 import Booktable from "./components/Fooddetails/Booktable"
+import Productscreen from "./components/Products/productscreen";
+// import { API_URL, SECRET_KEY } from '@env';
+
+// console.log(API_URL);
+
 const Stack = createStackNavigator();
 
 function HomeScreenWithFooter({ navigation }) {
@@ -118,6 +123,14 @@ function Booktablewithfooter({navigation}){
     </View>
   );
 }
+function Productscreenwithfooter({navigation}){
+  return (
+    <View style={{ flex: 1 }}>
+      <Productscreen navigation={navigation} />
+      <Footer />
+    </View>
+  );
+}
 function SlotBooking() {
   return (
     <View style={{ flex: 1 }}>
@@ -130,7 +143,28 @@ export default function App() {
   const [fontsLoaded, fontError] = useFonts({
     Noir_Regular: require("./assets/fonts/Comfortaa-VariableFont_wght.ttf"),
     Noir_Bold: require("./assets/fonts/noir.ttf"),
+  
+    
+    LufgaBlack: require("./assets/fonts/lufga/LufgaBlack.ttf"),
+    LufgaBlackItalic: require("./assets/fonts/lufga/LufgaBlackItalic.ttf"),
+    LufgaBold: require("./assets/fonts/lufga/LufgaBold.ttf"),
+    LufgaBoldItalic: require("./assets/fonts/lufga/LufgaBoldItalic.ttf"),
+    LufgaExtraBold: require("./assets/fonts/lufga/LufgaExtraBold.ttf"),
+    LufgaExtraBoldItalic: require("./assets/fonts/lufga/LufgaExtraBoldItalic.ttf"),
+    LufgaExtraLight: require("./assets/fonts/lufga/LufgaExtraLight.ttf"),
+    LufgaExtraLightItalic: require("./assets/fonts/lufga/LufgaExtraLightItalic.ttf"),
+    LufgaItalic: require("./assets/fonts/lufga/LufgaItalic.ttf"),
+    LufgaLight: require("./assets/fonts/lufga/LufgaLight.ttf"),
+    LufgaLightItalic: require("./assets/fonts/lufga/LufgaLightItalic.ttf"),
+    LufgaMedium: require("./assets/fonts/lufga/LufgaMedium.ttf"),
+    LufgaMediumItalic: require("./assets/fonts/lufga/LufgaMediumItalic.ttf"),
+    LufgaRegular: require("./assets/fonts/lufga/LufgaRegular.ttf"),
+    LufgaSemiBold: require("./assets/fonts/lufga/LufgaSemiBold.ttf"),
+    LufgaSemiBoldItalic: require("./assets/fonts/lufga/LufgaSemiBoldItalic.ttf"),
+    LufgaThin: require("./assets/fonts/lufga/LufgaThin.ttf"),
+    LufgaThinItalic: require("./assets/fonts/lufga/LufgaThinItalic.ttf"),
   });
+  
   if (fontsLoaded) {
     console.log("fonts loaded sucessfully : ", fontsLoaded);
   }
@@ -141,7 +175,19 @@ export default function App() {
     console.error("Font loading error:", fontError);
     return <Text>Error loading fonts</Text>;
   }
-
+  // let [fontsLoaded, fontError] = useFonts({
+  //   Poppins_400Regular,
+  //   Poppins_700Bold,
+  // });
+  
+  // if (fontError) {
+  //   return <Text>Error loading fonts</Text>;
+  // }
+  
+  // if (!fontsLoaded) {
+  //   return <ActivityIndicator size="large" />;
+  // }
+  
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -166,6 +212,7 @@ export default function App() {
         <Stack.Screen name="DetailedScreen" component={MountainIndetail} />
         <Stack.Screen name="SlotBooking" component={SlotBooking} />
         <Stack.Screen name="Landingpage" component={OnboardingScreen} />
+        <Stack.Screen name="Products" component={Productscreenwithfooter} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
