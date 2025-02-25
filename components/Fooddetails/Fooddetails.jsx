@@ -1,10 +1,11 @@
 
 
 
-import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity,ScrollView,Image} from 'react-native'
+import React,{useState}  from 'react'
+import { View, Text, StyleSheet, TouchableOpacity,ScrollView,Image,Modal,TextInput} from 'react-native'
 import { Icon } from 'react-native-elements'
-import { TextInput } from 'react-native-gesture-handler'
+import { Ionicons } from "@expo/vector-icons"; 
+
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen'
 const topPicks = [
   {
@@ -58,7 +59,10 @@ const DishCard = ({ image, title, description, price }) => (
   </TouchableOpacity>
 );
 const Fooddetails = ({ navigation }) => {
-  return (
+  const [modalVisible, setModalVisible] = useState(false);
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [reviewText, setReviewText] = useState("");
+    return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.icon}>
         <Icon
@@ -82,7 +86,6 @@ const Fooddetails = ({ navigation }) => {
           <Text style={styles.ratingText}>4.7</Text>
           <Icon
             name="star"
-            type="feather"
             color="white"
             size={18}
             style={styles.starIcon}
@@ -95,7 +98,7 @@ const Fooddetails = ({ navigation }) => {
       <View style={styles.thirdrow}>
         <Text>2.5 Km</Text>
         <Text>Viman nagar</Text>
-        <TouchableOpacity style={styles.bookatablebutton}>
+        <TouchableOpacity style={styles.bookatablebutton} onPress={()=>navigation.navigate("Booktable")}>
           <Text style={{ color: "white", fontWeight: "bold" }}>
             Book a Table
           </Text>
@@ -109,33 +112,43 @@ const Fooddetails = ({ navigation }) => {
             placeholder="Search for dishes"
           />
         </View>
-        <TouchableOpacity style={styles.reviewbutton}>
+        <TouchableOpacity style={styles.reviewbutton} onPress={() => setModalVisible(true)}>
           <Text style={{ color: "white", fontWeight: "bold" }}>Add review</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.horizontalWrapper}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.horizontalScroll}
-        >
-          <TouchableOpacity style={styles.categoryButton}>
-            <Text style={styles.categoryText}>All</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.categoryButton}>
-            <Text style={styles.categoryText}>Popular</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.categoryButton}>
-            <Text style={styles.categoryText}>South Indian</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.categoryButton}>
-            <Text style={styles.categoryText}>Chinese</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.categoryButton}>
-            <Text style={styles.categoryText}>Desserts</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </View>
+  <ScrollView
+    horizontal
+    showsHorizontalScrollIndicator={false}
+    contentContainerStyle={styles.horizontalScroll}
+  >
+    <TouchableOpacity style={styles.categoryButton}>
+      <Icon name="grid" type="feather" size={18} color="black" />
+      <Text style={styles.categoryText}>All</Text>
+    </TouchableOpacity>
+    
+    <TouchableOpacity style={styles.categoryButton}>
+      <Icon name="trending-up" type="feather" size={18} color="black" />
+      <Text style={styles.categoryText}>Popular</Text>
+    </TouchableOpacity>
+    
+    <TouchableOpacity style={styles.categoryButton}>
+      <Icon name="flag" type="feather" size={18} color="black" />
+      <Text style={styles.categoryText}>South Indian</Text>
+    </TouchableOpacity>
+    
+    <TouchableOpacity style={styles.categoryButton}>
+      <Icon name="coffee" type="feather" size={18} color="black" />
+      <Text style={styles.categoryText}>Chinese</Text>
+    </TouchableOpacity>
+    
+    <TouchableOpacity style={styles.categoryButton}>
+      <Icon name="heart" type="feather" size={18} color="black" />
+      <Text style={styles.categoryText}>Desserts</Text>
+    </TouchableOpacity>
+  </ScrollView>
+</View>
+
       <View style={styles.topratedsection}>
         <Text style={styles.topPicksHeading}>Top Picks</Text>
 
@@ -181,6 +194,41 @@ const Fooddetails = ({ navigation }) => {
           ))}
         </ScrollView>
       </View>
+      <Modal visible={modalVisible} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+              <Icon name="close" size={15} color="white" />
+            </TouchableOpacity>
+
+            <Text style={styles.modalTitle}>Add Review</Text>
+
+            <Text style={styles.inputLabel}>Title</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter review title..."
+              placeholderTextColor="#999"
+              value={reviewTitle}
+              onChangeText={setReviewTitle}
+            />
+
+            <Text style={styles.inputLabel}>Description</Text>
+            <TextInput
+              style={[styles.input, styles.descriptionInput]}
+              placeholder="Write your review..."
+              placeholderTextColor="#999"
+              value={reviewText}
+              onChangeText={setReviewText}
+              multiline
+              numberOfLines={5}
+            />
+
+            <TouchableOpacity style={styles.submitButton}>
+              <Text style={styles.submitButtonText}>Add Review</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -219,7 +267,7 @@ const styles = StyleSheet.create({
   circle: {
     width: wp("3%"),
     height: wp("3%"),
-    backgroundColor: "#14cd07",
+    backgroundColor: "#rgba(0, 208, 132, 1)",
     borderRadius: 50,
     alignSelf: "center",
   },
@@ -230,7 +278,7 @@ const styles = StyleSheet.create({
   ratings: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#14cd07",
+    backgroundColor: "#rgba(0, 208, 132, 1)",
     padding: wp("0.7%"),
     borderRadius: wp("1%"),
   },
@@ -239,6 +287,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     marginRight: wp("1%"),
+    paddingLeft: wp("1.1%"),
   },
   starIcon: {
     marginTop: 2,
@@ -255,7 +304,7 @@ const styles = StyleSheet.create({
     marginTop: hp("1%"),
   },
   bookatablebutton: {
-    backgroundColor: "#14cd07",
+    backgroundColor: "#rgba(0, 208, 132, 1)",
     paddingVertical: wp("2%"),
     paddingHorizontal: wp("6%"),
     borderRadius: wp("2%"),
@@ -269,7 +318,7 @@ const styles = StyleSheet.create({
     marginTop: hp("1%"),
   },
   reviewbutton: {
-    backgroundColor: "#14cd07",
+    backgroundColor: "#rgba(0, 208, 132, 1)",
     paddingVertical: wp("2%"),
     paddingHorizontal: wp("6%"),
     borderRadius: wp("2%"),
@@ -279,9 +328,9 @@ const styles = StyleSheet.create({
   searchbar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor:"#e5e5e57c",
-    width: wp("55%"),  
-    borderRadius:wp("3%")
+    backgroundColor: "#e5e5e57c",
+    width: wp("55%"),
+    borderRadius: wp("3%"),
   },
   horizontalScroll: {
     marginTop: hp("2%"),
@@ -290,23 +339,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   categoryButton: {
-    backgroundColor: "#f0f0f0",
     paddingVertical: hp("0.5%"),
     paddingHorizontal: wp("5%"),
     borderRadius: wp("2%"),
     marginRight: wp("2%"),
-    justifyContent: "center", 
+    justifyContent: "center",
     alignItems: "center",
+    borderColor: "grey",
+    borderWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    padding: 10,
   },
   categoryText: {
     fontSize: hp("2%"),
     fontWeight: "bold",
     color: "#333",
   },
-  
+
   topratedsection: {
     marginTop: hp("2%"),
-  
   },
   topPicksHeading: {
     fontSize: hp("2.5%"),
@@ -357,7 +410,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 16,
   },
   topPicksContainer: {
@@ -369,21 +422,21 @@ const styles = StyleSheet.create({
     height: 180,
     marginRight: 16,
     borderRadius: 12,
-    overflow: 'hidden',
-    position: 'relative',
+    overflow: "hidden",
+    position: "relative",
   },
   dishImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   overlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    ...StyleSheet.absoluteFillObject, 
+    backgroundColor: "rgba(43, 42, 42, 0.5)", 
+    justifyContent: "flex-end",
     padding: 16,
-    
+    borderRadius: 12, 
   },
+  
   vegIcon: {
     marginBottom: 8,
   },
@@ -391,37 +444,36 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderWidth: 1,
-    borderColor: '#00A877',
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: "#00A877",
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
   vegDot: {
     width: 8,
     height: 8,
-    backgroundColor: '#00A877',
+    backgroundColor: "#00A877",
     borderRadius: 4,
   },
   dishTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#ffffff',
+    fontWeight: "600",
+    color: "#ffffff",
     marginBottom: 4,
   },
   dishDescription: {
     fontSize: 12,
-    color: '#ffffff',
+    color: "#ffffff",
     opacity: 0.8,
     marginBottom: 8,
   },
   dishPrice: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
+    fontWeight: "600",
+    color: "#fff",
   },
   recommendedSection: {
     paddingTop: hp("2%"),
-   
   },
   recommendedHeading: {
     fontSize: wp("5%"),
@@ -432,13 +484,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#ffffff",
-    padding:wp("4%"),
+    padding: wp("4%"),
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 1,
     borderColor: "#E6DED9",
   },
-  
+
   vegIcon: {
     width: 20,
     height: 20,
@@ -450,46 +502,99 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginRight: 8,
   },
-  
+
   vegDot: {
     width: 10,
     height: 10,
     backgroundColor: "#00A877",
     borderRadius: 5,
   },
-  
+
   textContainer: {
     flex: 1,
     justifyContent: "center",
-    maxWidth: "70%", 
+    maxWidth: "70%",
   },
-  
+
   itemTitle: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#333",
   },
-  
+
   itemDescription: {
     fontSize: 12,
     color: "#777",
     lineHeight: 16,
-    maxWidth: "70%",  // Allowing text to take up to 70% of the width
+    maxWidth: "70%", 
     flexShrink: 1,
     flexWrap: "wrap",
     textAlign: "left",
   },
-  
-  
-  
-  
+
   recommendedImage: {
     width: wp("25%"),
     height: wp("30%"),
     borderRadius: 12,
   },
-  
-  
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContainer: {
+    width: wp("90%"),
+    backgroundColor: "white",
+    padding: wp("5%"),
+    borderRadius: wp("3%"),
+    alignItems: "center",
+    position: "relative",
+  },
+  closeButton: {
+    position: "absolute",
+    top: hp("1.5%"),
+    right: wp("3%"),
+    backgroundColor: "red",
+    borderRadius: wp("5%"),
+    padding: wp("2%"),
+  },
+  modalTitle: {
+    fontSize: hp("2.5%"),
+    fontWeight: "bold",
+    marginBottom: hp("2%"),
+  },
+  inputLabel: {
+    alignSelf: "flex-start",
+    fontSize: hp("2%"),
+    fontWeight: "bold",
+    marginBottom: hp("1%"),
+    color: "#444",
+  },
+  input: {
+    width: "100%",
+    backgroundColor: "#f5f5f5",
+    padding: hp("2%"),
+    borderRadius: wp("2%"),
+    fontSize: hp("2%"),
+    marginBottom: hp("2%"),
+  },
+  descriptionInput: {
+    height: hp("15%"),
+    textAlignVertical: "top",
+  },
+  submitButton: {
+    backgroundColor: "rgba(0, 208, 132, 1)",
+    padding: hp("2%"),
+    borderRadius: wp("3%"),
+    width: "100%",
+    alignItems: "center",
+  },
+  submitButtonText: {
+    color: "white",
+    fontSize: hp("2%"),
+    fontWeight: "bold",
+  },
 });
 
 export default Fooddetails
