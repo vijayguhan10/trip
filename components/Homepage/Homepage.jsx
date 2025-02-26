@@ -9,7 +9,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Icon } from "react-native-elements";
-import { useFonts } from "expo-font";
+import { useNavigation } from "@react-navigation/native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -17,8 +17,7 @@ import {
 import Sidebar from "../SideBar";
 
 const HomeScreen = () => {
-  
-
+  const navigation = useNavigation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -92,10 +91,14 @@ const HomeScreen = () => {
                 showsHorizontalScrollIndicator={false}
                 style={styles.destinationsContainer}
               >
-                <DestinationItem
-                  title="Shaniwar Wada"
-                  imageUri="https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718"
-                />
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Indetail")}
+                >
+                  <DestinationItem
+                    title="Shaniwar Wada"
+                    imageUri="https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718"
+                  />
+                </TouchableOpacity>
                 <DestinationItem
                   title="Sinhagad Fort"
                   imageUri="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtD6NqBnrOrK4UcNa9X3uBuRFBx1TcXBcn2Q&s"
@@ -182,7 +185,7 @@ const styles = StyleSheet.create({
     fontWeight: "light",
     textAlign: "center",
     marginLeft: wp("3%"),
-    fontFamily:"LufgaSemiBold"
+    fontFamily: "LufgaSemiBold",
   },
   weatherContainer: {
     alignItems: "center",
@@ -193,8 +196,8 @@ const styles = StyleSheet.create({
   wetherLocation: {
     flexDirection: "column",
   },
-  locationText: { fontSize: wp("4%"),fontFamily:"Noir_Regular"},
-  DateText: { paddingLeft: wp("6%"),fontFamily:"LufgaLight" },
+  locationText: { fontSize: wp("4%"), fontFamily: "Noir_Regular" },
+  DateText: { paddingLeft: wp("6%"), fontFamily: "LufgaLight" },
   weatherIcon: { width: wp("20%"), height: hp("6%") },
   WetherReport: {
     flexDirection: "column",
@@ -203,7 +206,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginLeft: wp("15%"),
   },
-  temperatureText: { fontSize: wp("5%"), fontWeight: "bold",fontFamily:"LufgaItalic" },
+  temperatureText: {
+    fontSize: wp("5%"),
+    fontWeight: "bold",
+    fontFamily: "LufgaItalic",
+  },
   celcius: { fontSize: wp("2.5%"), position: "relative", bottom: hp("4%") },
   categoriesContainer: {
     flexDirection: "row",
@@ -213,7 +220,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: wp("5%"),
     fontWeight: "light",
-    marginLeft: wp("5%"), 
+    marginLeft: wp("5%"),
     color: "grey",
     marginTop: hp("2%"),
     marginBottom: hp("2%"),
@@ -223,7 +230,7 @@ const styles = StyleSheet.create({
     fontWeight: "light",
     marginLeft: wp("5%"),
     color: "grey",
-    fontFamily:"Noir_Regular"
+    fontFamily: "Noir_Regular",
   },
   destinationsContainer: {
     flexDirection: "row",
@@ -251,7 +258,7 @@ const styles = StyleSheet.create({
     color: "white",
     position: "relative",
     bottom: hp("3.5%"),
-    fontFamily:"LufgaItalic"
+    fontFamily: "LufgaItalic",
   },
   ActivityImage: {
     width: wp("90%"),
@@ -260,9 +267,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     resizeMode: "cover",
   },
-  categorytitle:{
-  fontFamily:"LufgaItalic"
-  }
+  categorytitle: {
+    fontFamily: "LufgaItalic",
+  },
 });
 
 export default HomeScreen;

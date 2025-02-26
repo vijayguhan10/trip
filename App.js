@@ -1,5 +1,9 @@
 import { StatusBar } from "expo-status-bar";
-import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
+import {
+  useFonts,
+  Poppins_400Regular,
+  Poppins_700Bold,
+} from "@expo-google-fonts/poppins";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { StyleSheet, View, ActivityIndicator, Text } from "react-native";
@@ -9,19 +13,19 @@ import Places from "./components/Placestovisit/places";
 import Shopping from "./components/shopping/shopping";
 import FoodHome from "./components/Foods/FoodHome";
 import HomeScreen from "./components/Homepage/Homepage";
-import Footer from "./components/Footer"
-import ThingsToCarry from "./components/Thingstocarrry/things"
-import Bookings from "./components/Mybookings/Bookings"
+import Footer from "./components/Footer";
+import ThingsToCarry from "./components/Thingstocarrry/things";
+import Bookings from "./components/Mybookings/Bookings";
 import Profilescreen from "./components/profile/profilepage";
 import Fooddetails from "./components/Fooddetails/Fooddetails";
 import Overview from "./components/Activities/Overview";
 import DetailedScreen from "./components/Activities/DetailedScreen";
 import BookASlot from "./components/Activities/BookASlot";
 import OnboardingScreen from "./components/Landingpage/Landingpage";
-import Booktable from "./components/Fooddetails/Booktable"
+import Booktable from "./components/Fooddetails/Booktable";
 import Productscreen from "./components/Products/productscreen";
-// import { API_URL, SECRET_KEY } from '@env';
-
+import PlacesIndetail from "./components/Placestovisit/PlacesIndeail";
+// import { API_URL, SECRET_KEY } from '@env'
 // console.log(API_URL);
 
 const Stack = createStackNavigator();
@@ -34,7 +38,7 @@ function HomeScreenWithFooter({ navigation }) {
     </View>
   );
 }
-function ActiviesOverview({navigation}) {
+function ActiviesOverview({ navigation }) {
   return (
     <View style={{ flex: 1 }}>
       <Overview navigation={navigation} />
@@ -74,14 +78,14 @@ function FoodHomewithfooter({ navigation }) {
     </View>
   );
 }
-function ThingsToCarrywithfooter({navigation}){
+function ThingsToCarrywithfooter({ navigation }) {
   return (
     <View style={{ flex: 1 }}>
       <ThingsToCarry navigation={navigation} />
       <Footer />
-      </View>
-
-     ) }
+    </View>
+  );
+}
 function MountainIndetail() {
   return (
     <View style={{ flex: 1 }}>
@@ -90,7 +94,7 @@ function MountainIndetail() {
     </View>
   );
 }
-function Mybookingswithfooter({navigation}){
+function Mybookingswithfooter({ navigation }) {
   return (
     <View style={{ flex: 1 }}>
       <Bookings navigation={navigation} />
@@ -98,7 +102,7 @@ function Mybookingswithfooter({navigation}){
     </View>
   );
 }
-function Profilescreenwithfooter({navigation}){
+function Profilescreenwithfooter({ navigation }) {
   return (
     <View style={{ flex: 1 }}>
       <Profilescreen navigation={navigation} />
@@ -107,7 +111,7 @@ function Profilescreenwithfooter({navigation}){
   );
 }
 
-function Fooddetailswithfooter({navigation}){
+function Fooddetailswithfooter({ navigation }) {
   return (
     <View style={{ flex: 1 }}>
       <Fooddetails navigation={navigation} />
@@ -115,7 +119,7 @@ function Fooddetailswithfooter({navigation}){
     </View>
   );
 }
-function Booktablewithfooter({navigation}){
+function Booktablewithfooter({ navigation }) {
   return (
     <View style={{ flex: 1 }}>
       <Booktable navigation={navigation} />
@@ -123,7 +127,15 @@ function Booktablewithfooter({navigation}){
     </View>
   );
 }
-function Productscreenwithfooter({navigation}){
+function PlacesDetailed({ navigation }) {
+  return (
+    <View style={{ flex: 1 }}>
+      <PlacesIndetail navigation={navigation} />
+      <Footer />
+    </View>
+  );
+}
+function Productscreenwithfooter({ navigation }) {
   return (
     <View style={{ flex: 1 }}>
       <Productscreen navigation={navigation} />
@@ -143,8 +155,7 @@ export default function App() {
   const [fontsLoaded, fontError] = useFonts({
     Noir_Regular: require("./assets/fonts/Comfortaa-VariableFont_wght.ttf"),
     Noir_Bold: require("./assets/fonts/noir.ttf"),
-  
-    
+
     LufgaBlack: require("./assets/fonts/lufga/LufgaBlack.ttf"),
     LufgaBlackItalic: require("./assets/fonts/lufga/LufgaBlackItalic.ttf"),
     LufgaBold: require("./assets/fonts/lufga/LufgaBold.ttf"),
@@ -164,7 +175,7 @@ export default function App() {
     LufgaThin: require("./assets/fonts/lufga/LufgaThin.ttf"),
     LufgaThinItalic: require("./assets/fonts/lufga/LufgaThinItalic.ttf"),
   });
-  
+
   if (fontsLoaded) {
     console.log("fonts loaded sucessfully : ", fontsLoaded);
   }
@@ -179,15 +190,15 @@ export default function App() {
   //   Poppins_400Regular,
   //   Poppins_700Bold,
   // });
-  
+
   // if (fontError) {
   //   return <Text>Error loading fonts</Text>;
   // }
-  
+
   // if (!fontsLoaded) {
   //   return <ActivityIndicator size="large" />;
   // }
-  
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -205,6 +216,8 @@ export default function App() {
         <Stack.Screen name="Food" component={FoodHomewithfooter} />
         <Stack.Screen name="Things" component={ThingsToCarrywithfooter} />
         <Stack.Screen name="Mybookings" component={Mybookingswithfooter} />
+        <Stack.Screen name="Indetail" component={PlacesIndetail} />
+
         <Stack.Screen name="Profile" component={Profilescreenwithfooter} />
         <Stack.Screen name="Fooddetails" component={Fooddetailswithfooter} />
         <Stack.Screen name="Booktable" component={Booktablewithfooter} />
