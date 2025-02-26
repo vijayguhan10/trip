@@ -136,7 +136,7 @@ export default function Overview({navigation}) {
       <ScrollView 
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom:hp("5%")}}
+        contentContainerStyle={{paddingBottom:hp("10%")}}
       >
         {activities.map(activity => (
           <ActivityCard key={activity.id} activity={activity} navigation={navigation}/>
@@ -159,6 +159,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: wp('5%'),
     fontWeight: '400',
+    fontFamily:"Noir_Regular"
   },
   searchBar: {
     flexDirection: 'row',
@@ -237,7 +238,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: wp('4.5%'),
-    fontWeight: '600'
+    fontWeight: '600',
+    fontFamily:"LufgaBold"
   },
   ratingContainer: {
     flexDirection: 'row',

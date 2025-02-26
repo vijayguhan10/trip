@@ -164,7 +164,7 @@ const Fooddetails = ({ navigation }) => {
       </View>
       <View style={styles.recommendedSection}>
         <Text style={styles.recommendedHeading}>Recommended</Text>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:hp("10%")}}>
           {recommendedDishes.map((dish, index) => (
             <View key={index} style={styles.recommendedItem}>
               <View style={styles.vegIcon}>

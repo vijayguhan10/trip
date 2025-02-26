@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
     fontSize: hp("3%"),
     marginLeft: wp("2%"),
     fontWeight: "bold",
+    fontFamily:"LufgaBold"
   },
   rating: {
     backgroundColor: "rgba(0, 208, 132, 1)",
@@ -144,6 +145,7 @@ const styles = StyleSheet.create({
   },
   secondrowtext: {
     fontSize: wp("4%"),
+    fontFamily:"Noir_Regular"
   },
   thirdrow: {
     marginTop: hp("2%"),
@@ -155,9 +157,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp("8%"),
     borderRadius: wp("5%"),
     alignItems: "center",
+   
+
   },
   visitingustext: {
     color: "#ffff",
+     fontFamily:"LufgaMedium" 
   },
   iconcontainer: {
     marginLeft: wp("4%"),
@@ -223,6 +228,7 @@ const styles = StyleSheet.create({
     fontSize: wp("4%"),
     fontWeight: "500",
     flexShrink: 1, 
+     fontFamily:"LufgaItalic"
   },
   productPrice: {
     fontSize: wp("4%"),

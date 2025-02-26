@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
     fontSize: wp("5%"),
     fontWeight: "bold",
     marginBottom: wp("2%"),
+     fontFamily:"LufgaExtraLight"
   },
   activityRating: {
     marginRight: wp("2%"),
@@ -168,6 +169,7 @@ const styles = StyleSheet.create({
     fontSize: wp("4%"),
     color: "#888",
     marginBottom: hp("0.5%"),
+     fontFamily:"LufgaItalic"
   },
   buttonsContainer: {
     flexDirection: "row",

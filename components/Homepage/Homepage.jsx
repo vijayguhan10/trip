@@ -84,7 +84,7 @@ const HomeScreen = () => {
 
           {/* Top Destinations */}
           <Text style={styles.sectionTitle}>Top Destinations</Text>
-          <ScrollView nestedScrollEnabled={true} style={styles.container}>
+          <ScrollView nestedScrollEnabled={true} style={styles.container} contentContainerStyle={{paddingBottom:hp("10%")}}>
             <View>
               <ScrollView
                 horizontal
