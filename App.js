@@ -216,8 +216,7 @@ export default function App() {
         <Stack.Screen name="Food" component={FoodHomewithfooter} />
         <Stack.Screen name="Things" component={ThingsToCarrywithfooter} />
         <Stack.Screen name="Mybookings" component={Mybookingswithfooter} />
-        <Stack.Screen name="Indetail" component={PlacesIndetail} />
-
+        <Stack.Screen name="Indetail" component={PlacesDetailed} />
         <Stack.Screen name="Profile" component={Profilescreenwithfooter} />
         <Stack.Screen name="Fooddetails" component={Fooddetailswithfooter} />
         <Stack.Screen name="Booktable" component={Booktablewithfooter} />
