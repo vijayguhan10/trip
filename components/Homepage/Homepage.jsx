@@ -16,7 +16,7 @@ import {
 } from "react-native-responsive-screen";
 import Sidebar from "../SideBar";
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -94,10 +94,16 @@ const HomeScreen = () => {
 
                 style={styles.destinationsContainer}
               >
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("InDetail")}
+                >
+
                 <DestinationItem
                   title="Shaniwar Wada"
                   imageUri="https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718"
                 />
+                                </TouchableOpacity>
+
                 <DestinationItem
                   title="Sinhagad Fort"
                   imageUri="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtD6NqBnrOrK4UcNa9X3uBuRFBx1TcXBcn2Q&s"
@@ -264,6 +270,7 @@ const styles = StyleSheet.create({
     borderRadius: wp("4%"),
     alignSelf: "center",
     resizeMode: "cover",
+  
   },
   categorytitle:{
   fontFamily:"LufgaItalic"
