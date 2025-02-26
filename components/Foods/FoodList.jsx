@@ -103,6 +103,15 @@ const restaurants = [
 const FoodList = ({navigation}) => {
   return (
     <ScrollView style={styles.container}>
+        <View style={styles.headerContainer}>
+  <Image
+    source={{           uri: "https://s3-alpha-sig.figma.com/img/ddaa/adb6/c6c98e2fe207d9f625a7f037d2d90ed3?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=cs71l8dA0S20wpvfWJB2CUBLFYMSrUMJxnRF6qRWmVUpInwFQw2FmePNJiwpqsoR6njU5MzdFZtRVMopuQJEffYsmEpDhXVRFu0Lh5LrU3-z5putfMToKj4vPRgloaxxN7yHteqCaNekbvu05QJfc4iCh7yiQG26ptdnYoI1LhfYYIItpxX4Bm0bk9HreQwRhCk0VPOW-CNTwRDM8KVR7Y0SZfSjLmaV8lFV8ekv101ZxhF3zYpilRtmJNWHXuB9KcgeKghoFSbSTGe7Fcnb4FLly~lts34SgtXpHjTgxq2u84K7zt6G90GKg3SX2ot-5hc~jSPd4ZQNc585xu9vIA__",
+    }} 
+    style={styles.headerImage}
+    resizeMode="cover"
+  />
+</View>
+
       <Text style={styles.heading}>Dine Anytime!</Text>
       <FlatList
         horizontal
@@ -231,6 +240,17 @@ const styles = StyleSheet.create({
   categoryname:{
     fontFamily:"LufgaLight",
     marginTop:hp("1%")
-  }
+  },
+  headerContainer: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerImage: {
+    width: wp("96%"),
+    height: hp("20%"),
+    borderRadius: 10, 
+    alignContent: "center",
+  },
 });
 export default FoodList;

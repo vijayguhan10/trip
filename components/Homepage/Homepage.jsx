@@ -33,6 +33,7 @@ const HomeScreen = () => {
   };
 
   return (
+    <ScrollView contentContainerStyle={{paddingBottom:hp("10%")}}>
     <TouchableWithoutFeedback onPress={closeSidebar}>
       <View style={{ flex: 1 }}>
         <View style={styles.container}>
@@ -83,13 +84,14 @@ const HomeScreen = () => {
             <CategoryItem title="Shopping" />
           </View>
 
-          {/* Top Destinations */}
+       
           <Text style={styles.sectionTitle}>Top Destinations</Text>
-          <ScrollView nestedScrollEnabled={true} style={styles.container} contentContainerStyle={{paddingBottom:hp("10%")}}>
             <View>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ flexDirection: 'row', paddingHorizontal: wp("3%") }}
+
                 style={styles.destinationsContainer}
               >
                 <DestinationItem
@@ -104,10 +106,13 @@ const HomeScreen = () => {
                   title="Mulshi Dam"
                   imageUri="https://images.unsplash.com/photo-1533130061792-64b345e4a833?ixid=M3wxMzcxOTN8MHwxfHNlYXJjaHwyfHxtb3VudGFpbiUyMHBlYWt8ZW58MHx8fHwxNjg0MTQ4OTI3fDA&ixlib=rb-4.0.3&fm=jpg&w=3300&h=2200&fit=max"
                 />
+                <DestinationItem
+                  title="Mulshi Dam"
+                  imageUri="https://images.unsplash.com/photo-1533130061792-64b345e4a833?ixid=M3wxMzcxOTN8MHwxfHNlYXJjaHwyfHxtb3VudGFpbiUyMHBlYWt8ZW58MHx8fHwxNjg0MTQ4OTI3fDA&ixlib=rb-4.0.3&fm=jpg&w=3300&h=2200&fit=max"
+                />
               </ScrollView>
             </View>
 
-            {/* Top Activities Section */}
             <View>
               <Text style={styles.Activitytext}>Top activities</Text>
               <Image
@@ -123,12 +128,12 @@ const HomeScreen = () => {
                 }}
               />
             </View>
-          </ScrollView>
         </View>
 
         {isSidebarOpen && <Sidebar isSidebarOpen={isSidebarOpen} />}
       </View>
     </TouchableWithoutFeedback>
+    </ScrollView>
   );
 };
 

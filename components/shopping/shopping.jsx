@@ -1,8 +1,6 @@
-import { View, Text, FlatList, Image, TextInput, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, FlatList, Image, TextInput, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-
-
 
 const ShopCard = ({ image, title, location, distance, discount, rating }) => (
   <View style={styles.card}>
@@ -26,50 +24,47 @@ const ShopCard = ({ image, title, location, distance, discount, rating }) => (
   </View>
 );
 
-
 const topRatedShops = [
   { id: '1', image: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d", title: "Artisan Bazaar", location: "Downtown", distance: "0.7 km", discount: 40, rating: "4.7★" },
   { id: '2', image: "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a", title: "SA Centre", location: "Uptown", distance: "1.2 km", discount: 50, rating: "4.8★" },
+  { id: '3', image: "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a", title: "SA Centre", location: "Uptown", distance: "1.2 km", discount: 50, rating: "4.8★" },
+];
+
+const allShops = [
   { id: '3', image: "https://images.unsplash.com/photo-1560807707-8cc77767d783", title: "Mega Mall", location: "City Square", distance: "2.5 km", discount: 35, rating: "4.5★" },
   { id: '4', image: "https://images.unsplash.com/photo-1556740714-a8395b3bf30f", title: "ShopEase Plaza", location: "Market Street", distance: "3.1 km", discount: 30, rating: "4.6★" },
+  { id: '5', image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff", title: "City Mart", location: "Old Town", distance: "4.0 km", discount: 20, rating: "4.3★" },
 ];
 
 export default function ShoppingScreen() {
+  const combinedData = [
+    { type: 'header', title: 'Top Rated for Shopping' },
+    ...topRatedShops,
+    { type: 'header', title: 'All Shopping Centers' },
+    ...allShops,
+  ];
+
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
-        <Ionicons
-          name="search-outline"
-          size={wp("5%")}
-          color="#666"
-          style={styles.searchIcon}
-        />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search"
-          placeholderTextColor="#666"
-        />
+        <Ionicons name="search-outline" size={wp("5%")} color="#666" style={styles.searchIcon} />
+        <TextInput style={styles.searchInput} placeholder="Search" placeholderTextColor="#666" />
       </View>
-      <Text style={styles.sectionTitle}>Top Rated for Shopping</Text>
 
-      <View style={styles.topratedcontent}>
-        <FlatList
-          data={topRatedShops}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <ShopCard {...item} />}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-      <Text style={styles.sectionTitle}>All Shopping centers</Text>
-
-      <View style={styles.allcontent}>
       <FlatList
-          data={topRatedShops}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <ShopCard {...item} />}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
+  data={combinedData}
+  keyExtractor={(item, index) => index.toString()}
+  renderItem={({ item }) => 
+    item.type === 'header' ? (
+      <Text style={styles.sectionTitle}>{item.title}</Text>
+    ) : (
+      <ShopCard {...item} />
+    )
+  }
+  ListFooterComponent={<View style={{ height: hp('10%') }} />}
+  showsVerticalScrollIndicator={false}
+/>
+
     </View>
   );
 }
@@ -103,16 +98,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp('10%'),
     fontSize: wp('4%'),
   },
-  topratedcontent: {
-    height: hp('60%'),
-    borderRadius: wp('3%'),
-  
-  },
-  allcontent: {
-    marginTop: hp("1%"),
-    height: hp('50%'),
-    borderRadius: wp('3%'),
- 
+  sectionTitle: {
+    fontSize: wp('5%'),
+    fontWeight: 'bold',
+    marginVertical: hp('1%'),
+    color: '#333',
   },
   card: {
     width: '100%',
