@@ -72,7 +72,6 @@ const HomeScreen = ({navigation}) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={{ paddingBottom: hp("10%") }}>
       <TouchableWithoutFeedback onPress={closeSidebar}>
         <View style={{ flex: 1 }}>
           <View style={styles.container}>
@@ -100,6 +99,7 @@ const HomeScreen = ({navigation}) => {
             </View>
 
             <Text style={styles.welcomeText}>Welcome!</Text>
+            <ScrollView contentContainerStyle={{ paddingBottom: hp("10%") }}>
 
             <View style={styles.weatherContainer}>
               <View style={styles.wetherLocation}>
@@ -165,12 +165,12 @@ const HomeScreen = ({navigation}) => {
                 )}
               />
             </View>
+            </ScrollView>
           </View>
 
           {isSidebarOpen && <Sidebar isSidebarOpen={isSidebarOpen} />}
         </View>
       </TouchableWithoutFeedback>
-    </ScrollView>
   );
 };
 

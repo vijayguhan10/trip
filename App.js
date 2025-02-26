@@ -188,19 +188,7 @@ export default function App() {
     console.error("Font loading error:", fontError);
     return <Text>Error loading fonts</Text>;
   }
-  // let [fontsLoaded, fontError] = useFonts({
-  //   Poppins_400Regular,
-  //   Poppins_700Bold,
-  // });
-
-  // if (fontError) {
-  //   return <Text>Error loading fonts</Text>;
-  // }
-
-  // if (!fontsLoaded) {
-  //   return <ActivityIndicator size="large" />;
-  // }
-
+ 
   return (
     <NavigationContainer>
       <Stack.Navigator
