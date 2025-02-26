@@ -109,6 +109,7 @@ const FoodList = ({navigation}) => {
         showsHorizontalScrollIndicator={false}
         data={categories}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={{paddingBottom:"10px"}}
         renderItem={({ item }) => (
           <View style={styles.categoryItem}>
             <Image source={{ uri: item.icon }} style={styles.categoryIcon} />
@@ -121,6 +122,7 @@ const FoodList = ({navigation}) => {
       <FlatList
         data={restaurants}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={{paddingBottom:hp("10%")}}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => navigation.navigate("Fooddetails", { restaurant: item })}>
           <Card style={styles.card}>
