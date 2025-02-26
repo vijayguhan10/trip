@@ -7,15 +7,54 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  FlatList
 } from "react-native";
 import { Icon } from "react-native-elements";
-import { useFonts } from "expo-font";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import Sidebar from "../SideBar";
 
+const activities = [
+  {
+    id: "1",
+    title: "Activity 1",
+    image: "https://img.freepik.com/premium-photo/sunset-view-mountains-mountains_865967-1116351.jpg",
+  },
+  {
+    id: "2",
+    title: "Activity 2",
+    image: "https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718",
+  },
+];
+const destinations = [
+  {
+    id: "1",
+    title: "Shaniwar Wada",
+    imageUri:
+      "https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718",
+    navigate: true,
+  },
+  {
+    id: "2",
+    title: "Sinhagad Fort",
+    imageUri:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtD6NqBnrOrK4UcNa9X3uBuRFBx1TcXBcn2Q&s",
+  },
+  {
+    id: "3",
+    title: "Mulshi Dam",
+    imageUri:
+      "https://images.unsplash.com/photo-1533130061792-64b345e4a833?ixid=M3wxMzcxOTN8MHwxfHNlYXJjaHwyfHxtb3VudGFpbiUyMHBlYWt8ZW58MHx8fHwxNjg0MTQ4OTI3fDA&ixlib=rb-4.0.3&fm=jpg&w=3300&h=2200&fit=max",
+  },
+  {
+    id: "4",
+    title: "Mulshi Dam",
+    imageUri:
+      "https://images.unsplash.com/photo-1533130061792-64b345e4a833?ixid=M3wxMzcxOTN8MHwxfHNlYXJjaHwyfHxtb3VudGFpbiUyMHBlYWt8ZW58MHx8fHwxNjg0MTQ4OTI3fDA&ixlib=rb-4.0.3&fm=jpg&w=3300&h=2200&fit=max",
+  },
+];
 const HomeScreen = ({navigation}) => {
   
 
@@ -33,112 +72,104 @@ const HomeScreen = ({navigation}) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={{paddingBottom:hp("10%")}}>
-    <TouchableWithoutFeedback onPress={closeSidebar}>
-      <View style={{ flex: 1 }}>
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={toggleSidebar} style={{ padding: 10 }}>
-              <Icon
-                name={isSidebarOpen ? "close" : "menu"}
-                size={28}
-                color="#000"
-              />
-            </TouchableOpacity>
+    <ScrollView contentContainerStyle={{ paddingBottom: hp("10%") }}>
+      <TouchableWithoutFeedback onPress={closeSidebar}>
+        <View style={{ flex: 1 }}>
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <TouchableOpacity onPress={toggleSidebar} style={{ padding: 10 }}>
+                <Icon
+                  name={isSidebarOpen ? "close" : "menu"}
+                  size={28}
+                  color="#000"
+                />
+              </TouchableOpacity>
 
-            <Image
-              source={{
-                uri: "https://s3-alpha-sig.figma.com/img/44b3/9dae/f7b8d9642d79c4d7aa93f9b95ca7a006?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=VbWRgFdKRgubmu4OCPj40WLsnzqhAOym7l-qC34kfgGWTOpKb4wny2X8bI~P04jxYprVcVUbDUtxFFqkOz6JGiKhbCzWTb~RZLInR~ex0fZd~Y5vJ~~YuePtIBoROXfUgAuHVcF84l-JjLsUzNCP7-DBifgICfsoQxoZ~W906MyT-SIwQ0hsQvapnk0azm~xZenRIz5oCNHPYxdnayXZNt-32j9fFKnrcsWvcGLZqP9CLkndE03fA11urIdA1Yl0QCFl3m4a-RSA3jR1YIX5RDC9UdyKxx07M5d9Tg1HHkB5LUFRBRs2TCrKPQAJ2paoAUV1oFakggEY7~CeYt8qOw__",
-              }}
-              style={styles.profileImage}
-            />
-            <Icon name="search" size={28} color="#000" style={styles.search} />
-          </View>
-
-          <Text style={styles.welcomeText}>Welcome!</Text>
-
-          <View style={styles.weatherContainer}>
-            <View style={styles.wetherLocation}>
-              <Text style={styles.locationText}>📍 Pune, India</Text>
-              <Text style={styles.DateText}>Thursday, October 10</Text>
-            </View>
-            <View style={styles.WetherReportContainer}>
               <Image
                 source={{
-                  uri: "https://static.vecteezy.com/system/resources/thumbnails/008/854/797/small_2x/sunny-and-rainy-cloudy-day-weather-forecast-icon-meteorological-sign-3d-render-png.png",
+                  uri: "https://s3-alpha-sig.figma.com/img/44b3/9dae/f7b8d9642d79c4d7aa93f9b95ca7a006?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=VbWRgFdKRgubmu4OCPj40WLsnzqhAOym7l-qC34kfgGWTOpKb4wny2X8bI~P04jxYprVcVUbDUtxFFqkOz6JGiKhbCzWTb~RZLInR~ex0fZd~Y5vJ~~YuePtIBoROXfUgAuHVcF84l-JjLsUzNCP7-DBifgICfsoQxoZ~W906MyT-SIwQ0hsQvapnk0azm~xZenRIz5oCNHPYxdnayXZNt-32j9fFKnrcsWvcGLZqP9CLkndE03fA11urIdA1Yl0QCFl3m4a-RSA3jR1YIX5RDC9UdyKxx07M5d9Tg1HHkB5LUFRBRs2TCrKPQAJ2paoAUV1oFakggEY7~CeYt8qOw__",
                 }}
-                style={styles.weatherIcon}
+                style={styles.profileImage}
               />
-              <View style={styles.WetherReport}>
-                <Text style={styles.temperatureText}>
-                  19°<Text style={styles.celcius}>C</Text>
-                </Text>
-                <Text>Rainy</Text>
+              <Icon
+                name="search"
+                size={28}
+                color="#000"
+                style={styles.search}
+              />
+            </View>
+
+            <Text style={styles.welcomeText}>Welcome!</Text>
+
+            <View style={styles.weatherContainer}>
+              <View style={styles.wetherLocation}>
+                <Text style={styles.locationText}>📍 Pune, India</Text>
+                <Text style={styles.DateText}>Thursday, October 10</Text>
+              </View>
+              <View style={styles.WetherReportContainer}>
+                <Image
+                  source={{
+                    uri: "https://static.vecteezy.com/system/resources/thumbnails/008/854/797/small_2x/sunny-and-rainy-cloudy-day-weather-forecast-icon-meteorological-sign-3d-render-png.png",
+                  }}
+                  style={styles.weatherIcon}
+                />
+                <View style={styles.WetherReport}>
+                  <Text style={styles.temperatureText}>
+                    19°<Text style={styles.celcius}>C</Text>
+                  </Text>
+                  <Text>Rainy</Text>
+                </View>
               </View>
             </View>
-          </View>
 
-          <View style={styles.categoriesContainer}>
-            <CategoryItem title="Restaurants" />
-            <CategoryItem title="Activities" />
-            <CategoryItem title="Shopping" />
-          </View>
+            <View style={styles.categoriesContainer}>
+              <CategoryItem title="Restaurants" />
+              <CategoryItem title="Activities" />
+              <CategoryItem title="Shopping" />
+            </View>
 
-       
-          <Text style={styles.sectionTitle}>Top Destinations</Text>
+            <Text style={styles.sectionTitle}>Top Destinations</Text>
             <View>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ flexDirection: 'row', paddingHorizontal: wp("3%") }}
+            <ScrollView
+  horizontal
+  showsHorizontalScrollIndicator={false}
+  contentContainerStyle={{
+    flexDirection: "row",
+    paddingHorizontal: wp("3%"),
+  }}
+  style={styles.destinationsContainer}
+>
+  {destinations.map((item) => (
+    <TouchableOpacity key={item.id} onPress={() => navigation.navigate("Indetail")}>
+      <DestinationItem title={item.title} imageUri={item.imageUri} />
+    </TouchableOpacity>
+  ))}
+</ScrollView>
 
-                style={styles.destinationsContainer}
-              >
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("InDetail")}
-                >
-
-                <DestinationItem
-                  title="Shaniwar Wada"
-                  imageUri="https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718"
-                />
-                                </TouchableOpacity>
-
-                <DestinationItem
-                  title="Sinhagad Fort"
-                  imageUri="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtD6NqBnrOrK4UcNa9X3uBuRFBx1TcXBcn2Q&s"
-                />
-                <DestinationItem
-                  title="Mulshi Dam"
-                  imageUri="https://images.unsplash.com/photo-1533130061792-64b345e4a833?ixid=M3wxMzcxOTN8MHwxfHNlYXJjaHwyfHxtb3VudGFpbiUyMHBlYWt8ZW58MHx8fHwxNjg0MTQ4OTI3fDA&ixlib=rb-4.0.3&fm=jpg&w=3300&h=2200&fit=max"
-                />
-                <DestinationItem
-                  title="Mulshi Dam"
-                  imageUri="https://images.unsplash.com/photo-1533130061792-64b345e4a833?ixid=M3wxMzcxOTN8MHwxfHNlYXJjaHwyfHxtb3VudGFpbiUyMHBlYWt8ZW58MHx8fHwxNjg0MTQ4OTI3fDA&ixlib=rb-4.0.3&fm=jpg&w=3300&h=2200&fit=max"
-                />
-              </ScrollView>
             </View>
 
             <View>
               <Text style={styles.Activitytext}>Top activities</Text>
-              <Image
-                style={styles.ActivityImage}
-                source={{
-                  uri: "https://img.freepik.com/premium-photo/sunset-view-mountains-mountains_865967-1116351.jpg",
-                }}
-              />
-              <Image
-                style={styles.ActivityImage}
-                source={{
-                  uri: "https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718",
-                }}
+              <FlatList
+                data={activities}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("Indetail")}
+                  >
+                    <Image
+                      style={styles.ActivityImage}
+                      source={{ uri: item.image }}
+                    />
+                  </TouchableOpacity>
+                )}
               />
             </View>
-        </View>
+          </View>
 
-        {isSidebarOpen && <Sidebar isSidebarOpen={isSidebarOpen} />}
-      </View>
-    </TouchableWithoutFeedback>
+          {isSidebarOpen && <Sidebar isSidebarOpen={isSidebarOpen} />}
+        </View>
+      </TouchableWithoutFeedback>
     </ScrollView>
   );
 };
@@ -193,7 +224,7 @@ const styles = StyleSheet.create({
     fontWeight: "light",
     textAlign: "center",
     marginLeft: wp("3%"),
-    fontFamily:"LufgaSemiBold"
+    fontFamily: "LufgaSemiBold",
   },
   weatherContainer: {
     alignItems: "center",
@@ -204,8 +235,8 @@ const styles = StyleSheet.create({
   wetherLocation: {
     flexDirection: "column",
   },
-  locationText: { fontSize: wp("4%"),fontFamily:"Noir_Regular"},
-  DateText: { paddingLeft: wp("6%"),fontFamily:"LufgaLight" },
+  locationText: { fontSize: wp("4%"), fontFamily: "Noir_Regular" },
+  DateText: { paddingLeft: wp("6%"), fontFamily: "LufgaLight" },
   weatherIcon: { width: wp("20%"), height: hp("6%") },
   WetherReport: {
     flexDirection: "column",
@@ -214,7 +245,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginLeft: wp("15%"),
   },
-  temperatureText: { fontSize: wp("5%"), fontWeight: "bold",fontFamily:"LufgaItalic" },
+  temperatureText: {
+    fontSize: wp("5%"),
+    fontWeight: "bold",
+    fontFamily: "LufgaItalic",
+  },
   celcius: { fontSize: wp("2.5%"), position: "relative", bottom: hp("4%") },
   categoriesContainer: {
     flexDirection: "row",
@@ -224,7 +259,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: wp("5%"),
     fontWeight: "light",
-    marginLeft: wp("5%"), 
+    marginLeft: wp("5%"),
     color: "grey",
     marginTop: hp("2%"),
     marginBottom: hp("2%"),
@@ -234,7 +269,7 @@ const styles = StyleSheet.create({
     fontWeight: "light",
     marginLeft: wp("5%"),
     color: "grey",
-    fontFamily:"Noir_Regular"
+    fontFamily: "Noir_Regular",
   },
   destinationsContainer: {
     flexDirection: "row",
@@ -262,7 +297,7 @@ const styles = StyleSheet.create({
     color: "white",
     position: "relative",
     bottom: hp("3.5%"),
-    fontFamily:"LufgaItalic"
+    fontFamily: "LufgaItalic",
   },
   ActivityImage: {
     width: wp("90%"),
@@ -270,11 +305,11 @@ const styles = StyleSheet.create({
     borderRadius: wp("4%"),
     alignSelf: "center",
     resizeMode: "cover",
-  
+    marginVertical: hp("1%"),
   },
-  categorytitle:{
-  fontFamily:"LufgaItalic"
-  }
+  categorytitle: {
+    fontFamily: "LufgaItalic",
+  },
 });
 
 export default HomeScreen;
