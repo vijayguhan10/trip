@@ -15,6 +15,7 @@ import {
 } from "react-native-responsive-screen";
 import { API_URL } from "@env";
 import ToastManager, { Toast } from "toastify-react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function LoginScreen({ navigation }) {
   const [bookingId, setBookingId] = useState("");
   const [lastName, setLastName] = useState("");
@@ -28,6 +29,8 @@ export default function LoginScreen({ navigation }) {
         name:lastName,
       });
       console.log("Login successful:", response.data);
+      const token = response.data.token; 
+      await AsyncStorage.setItem("authToken", token);
       Toast.success("Login successful");
       setTimeout(()=>{
         navigation.navigate("Home");
