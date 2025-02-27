@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,35 +8,59 @@ import {
   Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import axios from "axios";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-
+import { API_URL } from "@env";
+import ToastManager, { Toast } from "toastify-react-native";
 export default function LoginScreen({ navigation }) {
+  const [bookingId, setBookingId] = useState("");
+  const [lastName, setLastName] = useState("");
+
+  const handleLogin = async () => {
+    console.log("hello",bookingId,lastName)
+    console.log(API_URL)
+    try {
+      const response = await axios.post(`${API_URL}/bookings/verify`, {
+        booking_id:bookingId,
+        name:lastName,
+      });
+      console.log("Login successful:", response.data);
+      Toast.success("Login successful");
+      setTimeout(()=>{
+        navigation.navigate("Home");
+
+      },[3000])
+    } catch (error) {
+      console.error("Login failed:", error.response?.data || error.message);
+    }
+  };
+
   return (
     <LinearGradient
       colors={["#F5E5C0", "#DCE2F0", "#A3C7F4"]}
       style={styles.container}
-    >
+    >  <ToastManager />
       <View style={styles.card}>
         <Image
-        style={{width:hp("30%"),height:hp("20%")}}
+          style={{ width: hp("30%"), height: hp("20%") }}
           source={{
             uri: "https://s3-alpha-sig.figma.com/img/02c3/4fd3/b73ef0a13ece73c6ebac7abdfd912bd1?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=CXaEkDLOiAuPPT4qooIZwshz-8yltiGaw6pFuS74qEjYU6PGTjKsDKdJsJ6qnHOdE0T31aSmc2ONCNLiqS~2pY4BpqmEMQbBwM5EsOy~Mgso-l2UQLm2JSOCtpwS1L2MHxUSDXL5Ajw98Ds2AwkMyeObtj16-n8fLh~U0oRQ205lugO0lHpMqYMxnI6M6eK3ylvpnhqBbmtR0pbg8atIWOs2H9S9l7DYrPeteqAjgB0d3KMbVv62X7~8JX6FiYYpMTK5bwUtJ9GFzboxoQ69eQsoXcAGG4wxwekgXuUkp7w5u4VRPlKITQNazK3jVyieNas0Gh-7LoSmDaAcjTCvDg__",
           }}
         />
 
         <Text style={styles.title}>Welcome Back!</Text>
-        <Text style={styles.subtitle}>
-          Start Your Next Adventure with 4TRIP
-        </Text>
+        <Text style={styles.subtitle}>Start Your Next Adventure with 4TRIP</Text>
 
         <Text style={styles.label}>Booking ID</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter your booking ID"
           placeholderTextColor="#B0B0B0"
+          value={bookingId}
+          onChangeText={setBookingId}
         />
 
         <Text style={styles.label}>Last name</Text>
@@ -44,18 +68,15 @@ export default function LoginScreen({ navigation }) {
           style={styles.input}
           placeholder="Last name"
           placeholderTextColor="#B0B0B0"
+          value={lastName}
+          onChangeText={setLastName}
         />
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("Home")}
-        >
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
 
-        <Text style={styles.helpText}>
-          Not able to login? Call your travel agent
-        </Text>
+        <Text style={styles.helpText}>Not able to login? Call your travel agent</Text>
       </View>
     </LinearGradient>
   );
@@ -79,18 +100,11 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  logo: {
-    fontSize: wp("11%"),
-    fontWeight: "bold",
-    color: "#009688",
-    marginBottom: hp("1%"),
-  },
   title: {
     fontSize: wp("5.8%"),
     fontWeight: "bold",
     color: "#333",
     marginBottom: hp("1%"),
-    fontFamily:"Noir_Regular"
   },
   subtitle: {
     fontSize: wp("3.5%"),
