@@ -7,9 +7,12 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
-  FlatList
+  FlatList,
 } from "react-native";
+import axios from "axios";
 import { Icon } from "react-native-elements";
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -20,12 +23,14 @@ const activities = [
   {
     id: "1",
     title: "Activity 1",
-    image: "https://img.freepik.com/premium-photo/sunset-view-mountains-mountains_865967-1116351.jpg",
+    image:
+      "https://img.freepik.com/premium-photo/sunset-view-mountains-mountains_865967-1116351.jpg",
   },
   {
     id: "2",
     title: "Activity 2",
-    image: "https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718",
+    image:
+      "https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718",
   },
 ];
 const destinations = [
@@ -55,8 +60,36 @@ const destinations = [
       "https://images.unsplash.com/photo-1533130061792-64b345e4a833?ixid=M3wxMzcxOTN8MHwxfHNlYXJjaHwyfHxtb3VudGFpbiUyMHBlYWt8ZW58MHx8fHwxNjg0MTQ4OTI3fDA&ixlib=rb-4.0.3&fm=jpg&w=3300&h=2200&fit=max",
   },
 ];
-const HomeScreen = ({navigation}) => {
-  
+const HomeScreen = ({ navigation }) => {
+  const [topDestinations, setTopDestinations] = useState([]);
+  const [topActivities, setTopActivities] = useState([]);
+
+  const GetPlaces = async () => {
+    try {
+      const destinationId = await AsyncStorage.getItem("locationid");
+      if (!destinationId) throw new Error("Destination ID not found");
+
+      const response = await axios.get(
+        `${API_URL}/superadmin/places/${destinationId}`
+      );
+      if (!response.data || !response.data.data)
+        throw new Error("Invalid API Response");
+
+      const places = response.data.data || [];
+      console.log("Fetched Places:", JSON.stringify(places, null, 2));
+
+      const destinations = places.filter((place) => !place.top_activities);
+      const activities = places.filter((place) => place.top_activities);
+      setTopDestinations(destinations);
+      setTopActivities(activities);
+    } catch (error) {
+      console.error("Error fetching places:", error.message || error);
+    }
+  };
+
+  useEffect(() => {
+    GetPlaces();
+  }, []);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -72,35 +105,29 @@ const HomeScreen = ({navigation}) => {
   };
 
   return (
-      <TouchableWithoutFeedback onPress={closeSidebar}>
-        <View style={{ flex: 1 }}>
-          <View style={styles.container}>
-            <View style={styles.header}>
-              <TouchableOpacity onPress={toggleSidebar} style={{ padding: 10 }}>
-                <Icon
-                  name={isSidebarOpen ? "close" : "menu"}
-                  size={28}
-                  color="#000"
-                />
-              </TouchableOpacity>
-
-              <Image
-                source={{
-                  uri: "https://s3-alpha-sig.figma.com/img/44b3/9dae/f7b8d9642d79c4d7aa93f9b95ca7a006?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=VbWRgFdKRgubmu4OCPj40WLsnzqhAOym7l-qC34kfgGWTOpKb4wny2X8bI~P04jxYprVcVUbDUtxFFqkOz6JGiKhbCzWTb~RZLInR~ex0fZd~Y5vJ~~YuePtIBoROXfUgAuHVcF84l-JjLsUzNCP7-DBifgICfsoQxoZ~W906MyT-SIwQ0hsQvapnk0azm~xZenRIz5oCNHPYxdnayXZNt-32j9fFKnrcsWvcGLZqP9CLkndE03fA11urIdA1Yl0QCFl3m4a-RSA3jR1YIX5RDC9UdyKxx07M5d9Tg1HHkB5LUFRBRs2TCrKPQAJ2paoAUV1oFakggEY7~CeYt8qOw__",
-                }}
-                style={styles.profileImage}
-              />
+    <TouchableWithoutFeedback onPress={closeSidebar}>
+      <View style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={toggleSidebar} style={{ padding: 10 }}>
               <Icon
-                name="search"
+                name={isSidebarOpen ? "close" : "menu"}
                 size={28}
                 color="#000"
-                style={styles.search}
               />
-            </View>
+            </TouchableOpacity>
 
-            <Text style={styles.welcomeText}>Welcome!</Text>
-            <ScrollView contentContainerStyle={{ paddingBottom: hp("10%") }}>
+            <Image
+              source={{
+                uri: "https://s3-alpha-sig.figma.com/img/44b3/9dae/f7b8d9642d79c4d7aa93f9b95ca7a006?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=VbWRgFdKRgubmu4OCPj40WLsnzqhAOym7l-qC34kfgGWTOpKb4wny2X8bI~P04jxYprVcVUbDUtxFFqkOz6JGiKhbCzWTb~RZLInR~ex0fZd~Y5vJ~~YuePtIBoROXfUgAuHVcF84l-JjLsUzNCP7-DBifgICfsoQxoZ~W906MyT-SIwQ0hsQvapnk0azm~xZenRIz5oCNHPYxdnayXZNt-32j9fFKnrcsWvcGLZqP9CLkndE03fA11urIdA1Yl0QCFl3m4a-RSA3jR1YIX5RDC9UdyKxx07M5d9Tg1HHkB5LUFRBRs2TCrKPQAJ2paoAUV1oFakggEY7~CeYt8qOw__",
+              }}
+              style={styles.profileImage}
+            />
+            <Icon name="search" size={28} color="#000" style={styles.search} />
+          </View>
 
+          <Text style={styles.welcomeText}>Welcome!</Text>
+          <ScrollView contentContainerStyle={{ paddingBottom: hp("10%") }}>
             <View style={styles.weatherContainer}>
               <View style={styles.wetherLocation}>
                 <Text style={styles.locationText}>📍 Pune, India</Text>
@@ -130,47 +157,48 @@ const HomeScreen = ({navigation}) => {
 
             <Text style={styles.sectionTitle}>Top Destinations</Text>
             <View>
-            <ScrollView
-  horizontal
-  showsHorizontalScrollIndicator={false}
-  contentContainerStyle={{
-    flexDirection: "row",
-    paddingHorizontal: wp("3%"),
-  }}
-  style={styles.destinationsContainer}
->
-  {destinations.map((item) => (
-    <TouchableOpacity key={item.id} onPress={() => navigation.navigate("Indetail")}>
-      <DestinationItem title={item.title} imageUri={item.imageUri} />
-    </TouchableOpacity>
-  ))}
-</ScrollView>
-
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {topDestinations.map((item) => (
+                  <TouchableOpacity
+                    key={item._id}
+                    onPress={() =>
+                      navigation.navigate("Indetail", { destination: item })
+                    }
+                  >
+                    <DestinationItem
+                      title={item.place_name}
+                      imageUri={item.image_urls[0]}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
             </View>
 
             <View>
-              <Text style={styles.Activitytext}>Top activities</Text>
+              <Text style={styles.Activitytext}>Top Activities</Text>
               <FlatList
-                data={activities}
-                keyExtractor={(item) => item.id}
+                data={topActivities}
+                keyExtractor={(item) => item._id}
                 renderItem={({ item }) => (
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("Indetail")}
+                    onPress={() =>
+                      navigation.navigate("Indetail", { destination: item })
+                    }
                   >
                     <Image
                       style={styles.ActivityImage}
-                      source={{ uri: item.image }}
+                      source={{ uri: item.image_urls[0] }}
                     />
                   </TouchableOpacity>
                 )}
               />
             </View>
-            </ScrollView>
-          </View>
-
-          {isSidebarOpen && <Sidebar isSidebarOpen={isSidebarOpen} />}
+          </ScrollView>
         </View>
-      </TouchableWithoutFeedback>
+
+        {isSidebarOpen && <Sidebar isSidebarOpen={isSidebarOpen} />}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -186,12 +214,15 @@ const CategoryItem = ({ title }) => (
   </TouchableOpacity>
 );
 
-const DestinationItem = ({ title, imageUri }) => (
-  <View style={styles.destinationItem}>
-    <Image source={{ uri: imageUri }} style={styles.destinationImage} />
-    <Text style={styles.destinationText}>{title}</Text>
-  </View>
-);
+const DestinationItem = ({ title, imageUri }) => {
+  console.log("DestinationItem:", title, imageUri);
+  return (
+    <View style={styles.destinationItem}>
+      <Image source={{ uri: imageUri }} style={styles.destinationImage} />
+      <Text style={styles.destinationText}>{title}</Text>
+    </View>
+  );
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
