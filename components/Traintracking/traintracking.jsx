@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
-import { WebView } from "react-native-webview";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
