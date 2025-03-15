@@ -89,9 +89,13 @@ export default function ShoppingScreen({navigation}) {
       getShops();
     }, []);
     
+    const sortedShops = [...shops].sort((a, b) => b.customer_rating - a.customer_rating);
+    const topRatedShops = sortedShops.slice(0, 3); // Top 3 highest-rated shops
+    const remainingShops = sortedShops.slice(3); // The rest of the shops
+    
     const combinedData = [
-      { type: "header", title: "Shops Near You" },
-      ...shops.map(shop => ({
+      { type: "header", title: "Top Rated for Shopping" },
+      ...topRatedShops.map(shop => ({
         id: shop._id,
         image: shop.image_url[0] || "https://via.placeholder.com/150",
         title: shop.business_name,
@@ -100,7 +104,19 @@ export default function ShoppingScreen({navigation}) {
         discount: shop.discount,
         rating: `${shop.customer_rating}★`,
         description: shop.description,
-        mapurl:shop.map_url
+        mapurl: shop.map_url,
+      })),
+      { type: "header", title: "All Shopping Centers" },
+      ...remainingShops.map(shop => ({
+        id: shop._id,
+        image: shop.image_url[0] || "https://via.placeholder.com/150",
+        title: shop.business_name,
+        location: shop.city,
+        distance: `${shop.address}`,
+        discount: shop.discount,
+        rating: `${shop.customer_rating}★`,
+        description: shop.description,
+        mapurl: shop.map_url,
       })),
     ];
     
