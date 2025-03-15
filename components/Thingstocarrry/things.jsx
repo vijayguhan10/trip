@@ -2,6 +2,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, SafeAreaView
 import { Ionicons } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Icon } from 'react-native-elements';
+import { API_URL } from "@env";
+import { useEffect } from 'react';
 const itemsToCarry = [
   { 
     id: '1', 
@@ -51,6 +53,12 @@ const itemsToCarry = [
 ];
 
 export default function ThingsToCarry({navigation}) {
+  // useEffect(()=>{
+  //  const getdata=async()=>{
+  //  const response=await axios.get(`${API_URL}/`);
+  //  }
+  //  getdata();
+  // },[])
   return (
     <SafeAreaView style={styles.container}>
      <View style={styles.header}>

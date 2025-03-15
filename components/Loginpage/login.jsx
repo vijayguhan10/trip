@@ -24,19 +24,19 @@ export default function LoginScreen({ navigation }) {
     console.log("hello", bookingId, lastName);
     console.log(API_URL);
     try {
-      const response = await axios.post(`${API_URL}/bookings/verify`, {
-        booking_id: bookingId,
-        name: lastName,
+      const response = await axios.post(`${API_URL}/booking/verify`, {
+        booking_id:bookingId,
+        name:lastName,
       });
       console.log("Login successful:", response.data);
       const token = response.data.token;
       await AsyncStorage.setItem("authToken", token);
-      console.log("Destination_id", response.data.booking.Destination_id);
-      await AsyncStorage.setItem(
-        "locationid",
-        response.data.booking.Destination_id
-      );
-      console.log("AsyncStorage", await AsyncStorage.getItem("locationid"));
+      // console.log("Destination_id", response.data.booking.Destination_id);
+      // await AsyncStorage.setItem(
+      //   "locationid",
+      //   response.data.booking.Destination_id
+      // );
+      // console.log("AsyncStorage", await AsyncStorage.getItem("locationid"));
       Toast.success("Login successful");
       setTimeout(() => {
         navigation.navigate("Home");
