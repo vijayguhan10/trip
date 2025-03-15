@@ -70,7 +70,7 @@ const HomeScreen = ({ navigation }) => {
       if (!destinationId) throw new Error("Destination ID not found");
 
       const response = await axios.get(
-        `${API_URL}/superadmin/places/${destinationId}`
+        `${API_URL}/destination/${destinationId}`
       );
       if (!response.data || !response.data.data)
         throw new Error("Invalid API Response");
