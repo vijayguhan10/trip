@@ -24,7 +24,7 @@ export default function LoginScreen({ navigation }) {
     console.log("hello",bookingId,lastName)
     console.log(API_URL)
     try {
-      const response = await axios.post(`${API_URL}/bookings/verify`, {
+      const response = await axios.post(`${API_URL}/booking/verify`, {
         booking_id:bookingId,
         name:lastName,
       });
