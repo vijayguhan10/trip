@@ -15,27 +15,32 @@ import {
 } from "react-native-responsive-screen";
 import { API_URL } from "@env";
 import ToastManager, { Toast } from "toastify-react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function LoginScreen({ navigation }) {
   const [bookingId, setBookingId] = useState("");
   const [lastName, setLastName] = useState("");
 
   const handleLogin = async () => {
-    console.log("hello",bookingId,lastName)
-    console.log(API_URL)
+    console.log("hello", bookingId, lastName);
+    console.log(API_URL);
     try {
       const response = await axios.post(`${API_URL}/booking/verify`, {
         booking_id:bookingId,
         name:lastName,
       });
       console.log("Login successful:", response.data);
-      const token = response.data.token; 
+      const token = response.data.token;
       await AsyncStorage.setItem("authToken", token);
+      // console.log("Destination_id", response.data.booking.Destination_id);
+      // await AsyncStorage.setItem(
+      //   "locationid",
+      //   response.data.booking.Destination_id
+      // );
+      // console.log("AsyncStorage", await AsyncStorage.getItem("locationid"));
       Toast.success("Login successful");
-      setTimeout(()=>{
+      setTimeout(() => {
         navigation.navigate("Home");
-
-      },[3000])
+      }, [3000]);
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
     }
@@ -45,7 +50,9 @@ export default function LoginScreen({ navigation }) {
     <LinearGradient
       colors={["#F5E5C0", "#DCE2F0", "#A3C7F4"]}
       style={styles.container}
-    >  <ToastManager />
+    >
+      {" "}
+      <ToastManager />
       <View style={styles.card}>
         <Image
           style={{ width: hp("30%"), height: hp("20%") }}
@@ -55,7 +62,9 @@ export default function LoginScreen({ navigation }) {
         />
 
         <Text style={styles.title}>Welcome Back!</Text>
-        <Text style={styles.subtitle}>Start Your Next Adventure with 4TRIP</Text>
+        <Text style={styles.subtitle}>
+          Start Your Next Adventure with 4TRIP
+        </Text>
 
         <Text style={styles.label}>Booking ID</Text>
         <TextInput
@@ -79,7 +88,9 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
 
-        <Text style={styles.helpText}>Not able to login? Call your travel agent</Text>
+        <Text style={styles.helpText}>
+          Not able to login? Call your travel agent
+        </Text>
       </View>
     </LinearGradient>
   );

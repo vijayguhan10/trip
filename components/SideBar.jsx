@@ -5,9 +5,10 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { useNavigation } from "@react-navigation/native"; 
+import { useNavigation } from "@react-navigation/native";
+
 const Sidebar = ({ isSidebarOpen }) => {
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
   return (
     <View style={[styles.container, { width: isSidebarOpen ? wp("80%") : 0 }]}>
       <View style={styles.header}>
@@ -61,20 +62,52 @@ const Sidebar = ({ isSidebarOpen }) => {
         </View>
       </View>
       <View style={styles.logoutButton}>
-        <Icon name="log-out" type="feather" size={hp("3%")} />
-        <Text style={styles.logoutText}>Log out</Text>
+        <Icon name="log-out" type="feather" size={hp("3%")} />v{" "}
+        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+          <Text style={styles.logoutText}>Log out</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
 
 const menuItems = [
-  { label: "Live Train Tracking", icon: "train", type: "material", screen: "Traintracking" },
-  { label: "Train on Food", icon: "fastfood", type: "material", screen: "Food" },
-  { label: "Places to Visit", icon: "location-pin", type: "entypo", screen: "Places" },
-  { label: "Shopping", icon: "shopping-bag", type: "feather", screen: "Shopping" },
-  { label: "Things to Carry", icon: "fastfood", type: "material-community", screen: "Things" },
-  { label: "My Bookings", icon: "calendar", type: "feather", screen: "Mybookings" },
+  {
+    label: "Live Train Tracking",
+    icon: "train",
+    type: "material",
+    screen: "Traintracking",
+  },
+  {
+    label: "Train on Food",
+    icon: "fastfood",
+    type: "material",
+    screen: "Food",
+  },
+  {
+    label: "Places to Visit",
+    icon: "location-pin",
+    type: "entypo",
+    screen: "Places",
+  },
+  {
+    label: "Shopping",
+    icon: "shopping-bag",
+    type: "feather",
+    screen: "Shopping",
+  },
+  {
+    label: "Things to Carry",
+    icon: "fastfood",
+    type: "material-community",
+    screen: "Things",
+  },
+  {
+    label: "My Bookings",
+    icon: "calendar",
+    type: "feather",
+    screen: "Mybookings",
+  },
   { label: "My Profile", icon: "user", type: "feather", screen: "Profile" },
 ];
 const styles = StyleSheet.create({
@@ -104,11 +137,11 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontWeight: "bold",
-    fontFamily:"LufgaItalic"
+    fontFamily: "LufgaItalic",
   },
   userEmail: {
     color: "gray",
-    fontFamily:"Noir_Regular"
+    fontFamily: "Noir_Regular",
   },
   menuContainer: {
     // flex: 1,
@@ -126,7 +159,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: hp("1.5%"),
     marginLeft: wp("4%"),
-    fontFamily:"LufgaMedium"
+    fontFamily: "LufgaMedium",
   },
   logoutButton: {
     flexDirection: "row",
@@ -139,7 +172,7 @@ const styles = StyleSheet.create({
     marginTop: hp("5%"),
   },
   supportcontainerOuter: {
-    marginTop:hp("1%"),
+    marginTop: hp("1%"),
     borderColor: "#F4F1EC",
     borderRadius: hp("1.5%"),
     borderWidth: wp("0.4%"),
@@ -162,18 +195,17 @@ const styles = StyleSheet.create({
   logoutText: {
     fontSize: hp("1.5%"),
     marginLeft: wp("3%"),
-    fontFamily:"LufgaMedium"
+    fontFamily: "LufgaMedium",
   },
   notificationtext: {
     fontSize: hp("1.5%"),
     marginLeft: wp("3%"),
-    fontFamily:"LufgaRegular"
+    fontFamily: "LufgaRegular",
   },
   supporttext: {
     fontSize: hp("1.5%"),
     marginLeft: wp("3%"),
-    fontFamily:"LufgaRegular"
-
+    fontFamily: "LufgaRegular",
   },
 });
 
