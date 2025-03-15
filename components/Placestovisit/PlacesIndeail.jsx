@@ -6,7 +6,11 @@ import {
   StyleSheet,
   FlatList,
   ScrollView,
+  TouchableOpacity,
+  Linking 
 } from "react-native";
+import { WebView } from "react-native-webview";
+
 import { useRoute } from "@react-navigation/native";
 import {
   widthPercentageToDP as wp,
@@ -97,15 +101,32 @@ const PlacesIndetail = () => {
             <Text style={styles.description}>{destination.short_summary}</Text>
           </View>
 
-          <View style={styles.mapContainer}>
-            <Image
-              source={{
-                uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/A_large_blank_world_map_with_oceans_marked_in_blue.PNG/2560px-A_large_blank_world_map_with_oceans_marked_in_blue.PNG",
-              }}
-              style={styles.mapimage}
-            />
-            {/* <Text style={styles.description}>{destination.short_summary}</Text> */}
-          </View>
+
+<View style={styles.mapContainer}>
+<TouchableOpacity onPress={() => Linking.openURL(destination.map_link)}>
+
+  <WebView
+    source={{
+      html: `
+        <html>
+          <body style="margin:0;padding:0;">
+            <iframe 
+              src="${destination.iframe_url}" 
+              width="100%" 
+              height="100%" 
+              style="border:0;"
+              allowfullscreen=""
+              loading="lazy">
+            </iframe>
+          </body>
+        </html>
+      `,
+    }}
+    style={styles.mapimage}
+  />
+    </TouchableOpacity>
+
+</View>
 
           <Text style={styles.title}>Recommended Restaurants</Text>
           <ScrollView
