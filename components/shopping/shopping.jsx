@@ -1,9 +1,20 @@
-import { View, Text, FlatList, Image, TextInput, StyleSheet } from 'react-native';
+import { View, Text, FlatList, Image, TextInput, StyleSheet,TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+const ShopCard = ({id, image, title, location, distance, discount, rating,navigation,description,mapurl})=>{
+  const handlePress = () => {
+    console.log(description)
+    navigation.navigate("Products", { shopId: id,description:description,mapurl:mapurl });
+  };
 
-const ShopCard = ({ image, title, location, distance, discount, rating }) => (
-  <View style={styles.card}>
+  return(
+    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+
+    <View style={styles.card}>
     <Image source={{ uri: image }} style={styles.cardImage} />
     <View style={styles.cardContent}>
       <View style={styles.titleRow}>
@@ -22,7 +33,11 @@ const ShopCard = ({ image, title, location, distance, discount, rating }) => (
       </View>
     </View>
   </View>
-);
+  </TouchableOpacity>
+  )
+}
+ 
+
 
 const topRatedShops = [
   { id: '1', image: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d", title: "Artisan Bazaar", location: "Downtown", distance: "0.7 km", discount: 40, rating: "4.7★" },
@@ -36,13 +51,59 @@ const allShops = [
   { id: '5', image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff", title: "City Mart", location: "Old Town", distance: "4.0 km", discount: 20, rating: "4.3★" },
 ];
 
-export default function ShoppingScreen() {
-  const combinedData = [
-    { type: 'header', title: 'Top Rated for Shopping' },
-    ...topRatedShops,
-    { type: 'header', title: 'All Shopping Centers' },
-    ...allShops,
-  ];
+export default function ShoppingScreen({navigation}) {
+ 
+    const[token,settoken]=useState();
+    const[shops,setshops]=useState([]);
+  
+    useEffect(() => {
+      const getShops = async () => {
+        try {
+          const authToken = await AsyncStorage.getItem("authToken");
+          const locationId = await AsyncStorage.getItem("locationid");
+    
+          if (!authToken || !locationId) {
+            console.error("Auth token or Location ID missing");
+            return;
+          }
+    
+          const response = await axios.get(`${API_URL}/shop`, {
+            params: { location_id: locationId },
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+              "Content-Type": "application/json",
+            },
+          });
+    
+          if (response.data && Array.isArray(response.data)) {
+            setshops(response.data);
+            console.log(response.data);
+          } else {
+            console.error("Unexpected API response format", response.data);
+          }
+        } catch (error) {
+          console.error("Error fetching shops:", error);
+        }
+      };
+    
+      getShops();
+    }, []);
+    
+    const combinedData = [
+      { type: "header", title: "Shops Near You" },
+      ...shops.map(shop => ({
+        id: shop._id,
+        image: shop.image_url[0] || "https://via.placeholder.com/150",
+        title: shop.business_name,
+        location: shop.city,
+        distance: `${shop.address}`,
+        discount: shop.discount,
+        rating: `${shop.customer_rating}★`,
+        description: shop.description,
+        mapurl:shop.map_url
+      })),
+    ];
+    
 
   return (
     <View style={styles.container}>
@@ -53,17 +114,18 @@ export default function ShoppingScreen() {
 
       <FlatList
   data={combinedData}
-  keyExtractor={(item, index) => index.toString()}
+  keyExtractor={(item) => item.id || Math.random().toString()}
   renderItem={({ item }) => 
     item.type === 'header' ? (
       <Text style={styles.sectionTitle}>{item.title}</Text>
     ) : (
-      <ShopCard {...item} />
+      <ShopCard {...item} navigation={navigation} />
     )
   }
-  ListFooterComponent={<View style={{ height: hp('10%') }} />}
+  ListFooterComponent={<View style={{ height: hp("10%") }} />}
   showsVerticalScrollIndicator={false}
 />
+
 
     </View>
   );

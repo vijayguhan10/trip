@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, Image } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Icon } from 'react-native-elements';
+import axios from "axios";
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRoute } from "@react-navigation/native";
+import { Linking } from "react-native";
 
 const PRODUCTS = [
   {
@@ -24,17 +29,71 @@ const PRODUCTS = [
   }
 ];
 
-const ProductItem = ({ item }) => (
-  <View style={styles.productItem}>
-    <Image source={{ uri: item.image }} style={styles.productImage} />
-    <View style={styles.productInfo}>
-      <Text style={styles.productName}>{item.name}</Text>
-      <Text style={styles.productPrice}>{item.price}</Text>
+const ProductItem = ({ item }) => {
+  console.log("Product Item Data:", item.price); // Debugging log
+
+  return (
+    <View style={styles.productItem}>
+         <Image source={{ uri: item.image }} style={styles.productImage} />
+ 
+      <View style={styles.productInfo}>
+        <Text style={styles.productName}>{item?.name || "No Name"}</Text>
+        <View style={styles.priceContainer}>
+          <Text style={styles.productPriceStrikethrough}>
+            {item?.price || 0}
+          </Text>
+          <Text style={styles.productPrice}>
+            ₹{item?.discounted_price || 0}
+          </Text>
+        </View>
+      </View>
     </View>
-  </View>
-);
+  );
+};
+
 
 const Productscreen = () => {
+    const route = useRoute();
+  
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const[descriptions,setdescription]=useState();
+  console.log("Route Params:", route?.params); 
+
+  const shop_id = route?.params?.shopId;
+  const description = route?.params?.description;
+  const mapurl=route?.params?.mapurl;
+
+  console.log("Shop ID:", shop_id);
+  console.log("Description:", description);
+  
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const authToken = await AsyncStorage.getItem("authToken");
+        const response = await axios.get(`${API_URL}/product`, {
+          params: { shop_id, is_deleted: false },
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+        console.log(response.data)
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [shop_id]);
+
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.innercontainer}>
@@ -52,13 +111,11 @@ const Productscreen = () => {
           </View>
         </View>
         <View style={styles.secondrow}>
-          <Text style={styles.secondrowtext}>
-            Artisan Bazaar is a vibrant marketplace offering handcrafted
-            products sourced directly from local artisans.
-          </Text>
+          <Text style={styles.secondrowtext}>{description}</Text>
         </View>
         <View style={styles.thirdrow}>
-          <TouchableOpacity style={styles.visitingusbutton}>
+          <TouchableOpacity style={styles.visitingusbutton}   onPress={() => Linking.openURL(mapurl)}
+          >
             <Text style={styles.visitingustext}>Visiting Us?</Text>
           </TouchableOpacity>
           <View style={styles.iconcontainer}>
@@ -88,11 +145,18 @@ const Productscreen = () => {
         </View>
         <View style={styles.fifthrow}>
           <FlatList
-            data={PRODUCTS}
-            renderItem={({ item }) => <ProductItem item={item} />}
-            keyExtractor={(item) => item.id}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: hp("10%") }}
+            data={products}
+            renderItem={({ item }) => (
+              <ProductItem
+                item={{
+                  name: item.name,
+                  price: `₹${item.price}`,
+                  image: item.image_url[0] || "https://via.placeholder.com/150",
+                  discounted_price: item.discounted_price,
+                }}
+              />
+            )}
+            keyExtractor={(item) => item._id}
           />
         </View>
       </View>
@@ -219,20 +283,31 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: wp("2%"),
-    paddingVertical: hp("1%"),
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     width: "100%",
   },
-  
   productName: {
-    fontSize: wp("4%"),
+    fontSize: 16,
     fontWeight: "500",
-    flexShrink: 1, 
-     fontFamily:"LufgaItalic"
+    flexShrink: 1,
+    fontFamily: "LufgaItalic",
+  },
+  priceContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  productPriceStrikethrough: {
+    fontSize: 16,
+    fontWeight: "bold",
+    textDecorationLine: "line-through",
+    color: "gray",
+    marginRight: 5,
   },
   productPrice: {
-    fontSize: wp("4%"),
+    fontSize: 16,
     fontWeight: "bold",
+    color: "#000",
   },
   bottomNav: {
     flexDirection: "row",
