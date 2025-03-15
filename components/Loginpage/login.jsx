@@ -29,14 +29,16 @@ export default function LoginScreen({ navigation }) {
         name:lastName,
       });
       console.log("Login successful:", response.data);
+      console.log("👼👼👼👼👼")
+      console.log("🚭🚭😍😍😍😍😍😍😍😍😍",response.data.booking.location_id)
       const token = response.data.token;
       await AsyncStorage.setItem("authToken", token);
-      // console.log("Destination_id", response.data.booking.Destination_id);
-      // await AsyncStorage.setItem(
-      //   "locationid",
-      //   response.data.booking.Destination_id
-      // );
-      // console.log("AsyncStorage", await AsyncStorage.getItem("locationid"));
+      // console.log("Destination_id", response.data.location_id);
+      await AsyncStorage.setItem(
+        "locationid",
+        response.data.booking.location_id
+      );
+      console.log("AsyncStorage", await AsyncStorage.getItem("locationid"));
       Toast.success("Login successful");
       setTimeout(() => {
         navigation.navigate("Home");

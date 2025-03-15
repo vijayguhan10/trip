@@ -63,15 +63,25 @@ const destinations = [
 const HomeScreen = ({ navigation }) => {
   const [topDestinations, setTopDestinations] = useState([]);
   const [topActivities, setTopActivities] = useState([]);
+  const[token,settoken]=useState();
 
   const GetPlaces = async () => {
     try {
+      const authToken = await AsyncStorage.getItem("authToken");
+    settoken(authToken);
       const destinationId = await AsyncStorage.getItem("locationid");
       if (!destinationId) throw new Error("Destination ID not found");
 
       const response = await axios.get(
-        `${API_URL}/destination/${destinationId}`
+        `${API_URL}/destination/${destinationId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`, 
+            "Content-Type": "application/json",
+          },
+        }
       );
+  
       if (!response.data || !response.data.data)
         throw new Error("Invalid API Response");
 
