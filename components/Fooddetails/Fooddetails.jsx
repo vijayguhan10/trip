@@ -1,47 +1,68 @@
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Modal,
+  TextInput,
+} from "react-native";
+import axios from "axios";
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Icon } from "react-native-elements";
+import { Ionicons } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native";
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from "react-native-responsive-screen";
+// const topPicks = [
+//   {
+//     image:
+//       "https://images.unsplash.com/photo-1630383249896-424e482df921?w=300&h=200&fit=crop",
+//     title: "Masala Dosa",
+//     description:
+//       "It's traditionally filled with a spiced potato mixture made with onions, mustard seeds, curry leaves, and turmeric.",
+//     price: "149",
+//   },
+//   {
+//     image:
+//       "https://images.unsplash.com/photo-1630383249896-424e482df921?w=300&h=200&fit=crop",
+//     title: "Masala Dosa",
+//     description:
+//       "It's traditionally filled with a spiced potato mixture made with onions, mustard seeds, curry leaves, and turmeric.",
+//     price: "149",
+//   },
+// ];
 
-
-
-import React,{useState}  from 'react'
-import { View, Text, StyleSheet, TouchableOpacity,ScrollView,Image,Modal,TextInput} from 'react-native'
-import { Icon } from 'react-native-elements'
-import { Ionicons } from "@expo/vector-icons"; 
-
-import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen'
-const topPicks = [
-  {
-    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?w=300&h=200&fit=crop",
-    title: "Masala Dosa",
-    description: "It's traditionally filled with a spiced potato mixture made with onions, mustard seeds, curry leaves, and turmeric.",
-    price: "149",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?w=300&h=200&fit=crop",
-    title: "Masala Dosa",
-    description: "It's traditionally filled with a spiced potato mixture made with onions, mustard seeds, curry leaves, and turmeric.",
-    price: "149",
-  },
-];
-
-const recommendedDishes = [
-  {
-    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop",
-    title: "Steam Idli",
-    description: "Idli is a traditional South Indian dish made from fermented rice and urad dal (black gram) batter, steamed into soft, fluffy cakes.",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop",
-    title: "Medu Wada",
-    description: "Medu Wada is a South Indian doughnut-shaped fritter made with urad dal, crispy on the outside and soft inside.",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop",
-    title: "Medu Wada",
-    description: "Medu Wada is a South Indian doughnut-shaped fritter made with urad dal, crispy on the outside and soft inside.",
-  },
-];
+// const recommendedDishes = [
+//   {
+//     image:
+//       "https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop",
+//     title: "Steam Idli",
+//     description:
+//       "Idli is a traditional South Indian dish made from fermented rice and urad dal (black gram) batter, steamed into soft, fluffy cakes.",
+//   },
+//   {
+//     image:
+//       "https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop",
+//     title: "Medu Wada",
+//     description:
+//       "Medu Wada is a South Indian doughnut-shaped fritter made with urad dal, crispy on the outside and soft inside.",
+//   },
+//   {
+//     image:
+//       "https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop",
+//     title: "Medu Wada",
+//     description:
+//       "Medu Wada is a South Indian doughnut-shaped fritter made with urad dal, crispy on the outside and soft inside.",
+//   },
+// ];
 
 const DishCard = ({ image, title, description, price }) => (
-  
   <TouchableOpacity style={styles.dishCard}>
     <Image source={{ uri: image }} style={styles.dishImage} />
     <View style={styles.overlay}>
@@ -58,11 +79,71 @@ const DishCard = ({ image, title, description, price }) => (
     </View>
   </TouchableOpacity>
 );
+
 const Fooddetails = ({ navigation }) => {
+  const route = useRoute();
   const [modalVisible, setModalVisible] = useState(false);
   const [reviewTitle, setReviewTitle] = useState("");
   const [reviewText, setReviewText] = useState("");
-    return (
+  const [shopFood, setShopFood] = useState([]);
+  const restaurntId = route.params?.restaurant_id;
+  const shop = route.params?.shop;
+  console.log("Restaurant Id reached:", restaurntId);
+
+  const GetFood = async () => {
+    try {
+      console.log("API URL data:", API_URL);
+      const authToken = await AsyncStorage.getItem("authToken");
+
+      const response = await axios.get(
+        `${API_URL}/dish?restaurant_id=${restaurntId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log(
+        "Response for the Shop Food:",
+        JSON.stringify(response.data, null, 2)
+      );
+
+      if (!Array.isArray(response.data)) {
+        throw new Error("Invalid API Response: Expected an array");
+      }
+
+      // Set the shopFood state with the API response
+      setShopFood(response.data);
+    } catch (error) {
+      console.error("Error fetching dishes:", error.message || error);
+    }
+  };
+
+  useEffect(() => {
+    GetFood();
+  }, []);
+
+  // Map shopFood to topPicks and recommendedDishes
+  const topPicks = shopFood.map((item) => ({
+    id: item._id,
+    title: item.name,
+    description: item.description,
+    image: item.image_url,
+    price: item.price,
+  }));
+
+  const recommendedDishes = shopFood.map((item) => ({
+    id: item._id,
+    title: item.name,
+    description: item.description,
+    image: item.image_url,
+    category: item.category,
+    price: item.price,
+  }));
+
+  return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.icon}>
         <Icon
@@ -84,21 +165,21 @@ const Fooddetails = ({ navigation }) => {
 
         <View style={styles.ratings}>
           <Text style={styles.ratingText}>4.7</Text>
-          <Icon
-            name="star"
-            color="white"
-            size={18}
-            style={styles.starIcon}
-          />
+          <Icon name="star" color="white" size={18} style={styles.starIcon} />
         </View>
       </View>
       <View>
-        <Text style={styles.headertext}>SA Dosa cafe-South indian</Text>
+        <Text style={styles.headertext}>{shop.business_name}</Text>
       </View>
       <View style={styles.thirdrow}>
-        <Text>2.5 Km</Text>
-        <Text>Viman nagar</Text>
-        <TouchableOpacity style={styles.bookatablebutton} onPress={()=>navigation.navigate("Booktable")}>
+        <Text>
+          {shop.businessHours.openingTime}-{shop.businessHours.closingTime}
+        </Text>
+        <Text>{shop?.single_line_address}</Text>
+        <TouchableOpacity
+          style={styles.bookatablebutton}
+          onPress={() => navigation.navigate("Booktable")}
+        >
           <Text style={{ color: "white", fontWeight: "bold" }}>
             Book a Table
           </Text>
@@ -112,42 +193,45 @@ const Fooddetails = ({ navigation }) => {
             placeholder="Search for dishes"
           />
         </View>
-        <TouchableOpacity style={styles.reviewbutton} onPress={() => setModalVisible(true)}>
+        <TouchableOpacity
+          style={styles.reviewbutton}
+          onPress={() => setModalVisible(true)}
+        >
           <Text style={{ color: "white", fontWeight: "bold" }}>Add review</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.horizontalWrapper}>
-  <ScrollView
-    horizontal
-    showsHorizontalScrollIndicator={false}
-    contentContainerStyle={styles.horizontalScroll}
-  >
-    <TouchableOpacity style={styles.categoryButton}>
-      <Icon name="grid" type="feather" size={18} color="black" />
-      <Text style={styles.categoryText}>All</Text>
-    </TouchableOpacity>
-    
-    <TouchableOpacity style={styles.categoryButton}>
-      <Icon name="trending-up" type="feather" size={18} color="black" />
-      <Text style={styles.categoryText}>Popular</Text>
-    </TouchableOpacity>
-    
-    <TouchableOpacity style={styles.categoryButton}>
-      <Icon name="flag" type="feather" size={18} color="black" />
-      <Text style={styles.categoryText}>South Indian</Text>
-    </TouchableOpacity>
-    
-    <TouchableOpacity style={styles.categoryButton}>
-      <Icon name="coffee" type="feather" size={18} color="black" />
-      <Text style={styles.categoryText}>Chinese</Text>
-    </TouchableOpacity>
-    
-    <TouchableOpacity style={styles.categoryButton}>
-      <Icon name="heart" type="feather" size={18} color="black" />
-      <Text style={styles.categoryText}>Desserts</Text>
-    </TouchableOpacity>
-  </ScrollView>
-</View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.horizontalScroll}
+        >
+          <TouchableOpacity style={styles.categoryButton}>
+            <Icon name="grid" type="feather" size={18} color="black" />
+            <Text style={styles.categoryText}>All</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.categoryButton}>
+            <Icon name="trending-up" type="feather" size={18} color="black" />
+            <Text style={styles.categoryText}>Popular</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.categoryButton}>
+            <Icon name="flag" type="feather" size={18} color="black" />
+            <Text style={styles.categoryText}>South Indian</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.categoryButton}>
+            <Icon name="coffee" type="feather" size={18} color="black" />
+            <Text style={styles.categoryText}>Chinese</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.categoryButton}>
+            <Icon name="heart" type="feather" size={18} color="black" />
+            <Text style={styles.categoryText}>Desserts</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
 
       <View style={styles.topratedsection}>
         <Text style={styles.topPicksHeading}>Top Picks</Text>
@@ -157,47 +241,63 @@ const Fooddetails = ({ navigation }) => {
           showsHorizontalScrollIndicator={false}
           style={styles.topPicksContainer}
         >
-          {topPicks.map((dish, index) => (
-            <DishCard key={index} {...dish} />
+          {topPicks.map((dish) => (
+            <DishCard
+              key={dish.id}
+              image={dish.image}
+              title={dish.title}
+              description={dish.description}
+              price={dish.price}
+            />
           ))}
         </ScrollView>
       </View>
-      <View style={styles.recommendedSection}>
-        <Text style={styles.recommendedHeading}>Recommended</Text>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:hp("10%")}}>
-          {recommendedDishes.map((dish, index) => (
-            <View key={index} style={styles.recommendedItem}>
+      {recommendedDishes.map((dish) => {
+        console.log("dishes to be mapped : ", JSON.stringify(dish, null, 2));
+
+        return (
+          <View key={dish.id} style={styles.recommendedItem}>
+            {dish.category === "veg" ? (
               <View style={styles.vegIcon}>
                 <View style={styles.vegSquare}>
                   <View style={styles.vegDot} />
                 </View>
               </View>
-
-              <View style={styles.textContainer}>
-                <Text style={styles.itemTitle}>{dish.title}</Text>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    flexWrap: "wrap",
-                    width: "100%",
-                  }}
-                >
-                  <Text style={styles.itemDescription}>{dish.description}</Text>
+            ) : (
+              <View style={styles.NonIcon}>
+                <View style={styles.NonSquare}>
+                  <View style={styles.NonDot} />
                 </View>
               </View>
+            )}
 
-              <Image
-                source={{ uri: dish.image }}
-                style={styles.recommendedImage}
-              />
+            <View style={styles.textContainer}>
+              <Text style={styles.itemTitle}>{dish.title}</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  width: "100%",
+                }}
+              >
+                <Text style={styles.itemDescription}>{dish.description}</Text>
+              </View>
             </View>
-          ))}
-        </ScrollView>
-      </View>
+
+            <Image
+              source={{ uri: dish.image }}
+              style={styles.recommendedImage}
+            />
+          </View>
+        );
+      })}
       <Modal visible={modalVisible} transparent animationType="slide">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
               <Icon name="close" size={15} color="white" />
             </TouchableOpacity>
 
@@ -231,8 +331,7 @@ const Fooddetails = ({ navigation }) => {
       </Modal>
     </ScrollView>
   );
-}
-
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -430,13 +529,13 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   overlay: {
-    ...StyleSheet.absoluteFillObject, 
-    backgroundColor: "rgba(43, 42, 42, 0.5)", 
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(43, 42, 42, 0.5)",
     justifyContent: "flex-end",
     padding: 16,
-    borderRadius: 12, 
+    borderRadius: 12,
   },
-  
+
   vegIcon: {
     marginBottom: 8,
   },
@@ -453,6 +552,24 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     backgroundColor: "#00A877",
+    borderRadius: 4,
+  },
+  NonIcon: {
+    marginBottom: 89,
+  },
+  NonSquare: {
+    width: 16,
+    height: 16,
+    borderWidth: 1,
+    borderColor: "rgb(250, 132, 112)",
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  NonDot: {
+    width: 8,
+    height: 8,
+    backgroundColor: "rgb(219, 51, 21)",
     borderRadius: 4,
   },
   dishTitle: {
@@ -487,6 +604,7 @@ const styles = StyleSheet.create({
     padding: wp("4%"),
     borderRadius: 12,
     marginBottom: 12,
+    marginTop:15,
     borderWidth: 1,
     borderColor: "#E6DED9",
   },
@@ -513,6 +631,7 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
     justifyContent: "center",
+    marginTop:5,
     maxWidth: "70%",
   },
 
@@ -526,7 +645,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#777",
     lineHeight: 16,
-    maxWidth: "70%", 
+    maxWidth: "110%",
     flexShrink: 1,
     flexWrap: "wrap",
     textAlign: "left",
@@ -597,4 +716,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Fooddetails
+export default Fooddetails;
