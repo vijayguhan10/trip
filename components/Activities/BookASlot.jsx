@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   View,
   Text,
@@ -13,8 +13,27 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { DatePickerModal, TimePickerModal } from "react-native-paper-dates";
-
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { useRoute } from "@react-navigation/native";
+import ToastManager, { Toast } from "toastify-react-native";
 export default function BookASlot() {
+
+  const route = useRoute();
+  const [activity, setActivity] = useState();
+  
+  useEffect(() => {
+    console.log("😂😂😂😂")
+    if (route.params?.activity) { 
+      console.log("😂😂😂😂",route.params?.activity._id)
+      console.log(route.params?.activity)
+
+      setActivity(route.params?.activity);
+    }
+  }, [route.params]);
+
+  
   const [participants, setParticipants] = useState(1);
   const [basePrice, setBasePrice] = useState(100);
   const [amount, setAmount] = useState(basePrice * participants);
@@ -30,9 +49,68 @@ export default function BookASlot() {
       return newCount;
     });
   };
-
+  const submit = async () => {
+    const authToken = await AsyncStorage.getItem("authToken");
+  
+    // Validation checks before proceeding
+    if (!selectedDate) {
+      Toast.error("Please select a date");
+      return;
+    }
+    if (!selectedTime) {
+      Toast.error("Please select a time");
+      return;
+    }
+    if (!participants || participants < 1) {
+      Toast.error("Please select at least one participant");
+      return;
+    }
+    if (!activity?._id) {
+      Toast.error("Invalid activity. Please try again");
+      return;
+    }
+  
+    console.log("Booking Confirmed!");
+    console.log("Date:", selectedDate.toDateString());
+    console.log("Time:", `${selectedTime.getHours()}:${selectedTime.getMinutes()}`);
+    console.log("Participants:", participants);
+  
+    try {
+      const response = await axios.post(
+        `${API_URL}/reservation/book`,
+        {
+          date: selectedDate.toDateString(),
+          bookedTime: `${selectedTime.getHours()}:${selectedTime.getMinutes()}`,
+          totalMembers: participants,
+          business_id: activity._id,
+          type: "Task",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      if (response.status === 201) {
+        Toast.success("Booking successful");
+      } else {
+        Toast.error("Some error occurred");
+      }
+  
+      console.log("Booking Response:", response.data);
+    } catch (error) {
+      console.error("Error confirming booking:", error);
+      Toast.error("Failed to confirm booking. Please try again.");
+    }
+  };
+  
+  
   return (
     <SafeAreaView style={styles.safeArea}>
+        <ToastManager />
+
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.backButton}>
@@ -79,7 +157,8 @@ export default function BookASlot() {
               },
             ]}
           >
-            Mountain Hike
+            {activity?.name}
+       
           </Text>
           <Text style={styles.label2}>Enter the data</Text>
           <Pressable
@@ -153,7 +232,7 @@ export default function BookASlot() {
           <Text style={styles.label2}>
             Reserve Your Slot with a Small Advance!
           </Text>
-          <Text
+          {/* <Text
             style={[
               styles.label,
               {
@@ -168,8 +247,8 @@ export default function BookASlot() {
             ]}
           >
             Total Amount to be Payable : ₹${amount}
-          </Text>
-          <TouchableOpacity style={styles.confirmButton}>
+          </Text> */}
+          <TouchableOpacity style={styles.confirmButton} onPress={submit}>
             <Text style={styles.confirmButtonText}>Confirm Booking</Text>
           </TouchableOpacity>
         </View>

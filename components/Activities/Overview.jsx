@@ -1,67 +1,13 @@
 import { View, Text, ScrollView, Image, StyleSheet,TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { useState } from 'react';
 
-const activities = [
-  {
-    id: '1',
-    title: 'Mountain Hike',
-    price: '200',
-    rating: '4.7',
-    images: [
-      'https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=1000',
-      'https://images.unsplash.com/photo-1527856263669-12c3a0af2aa6?q=80&w=1000',
-      'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1000'
-    ]
-  },
-  {
-    id: '2',
-    title: '4 Wheel Ride',
-    price: '300',
-    rating: '4.8',
-    images: [
-      'https://images.unsplash.com/photo-1621609764095-b32bbe35cf3a?q=80&w=1000',
-      'https://images.unsplash.com/photo-1506015391300-4802dc74de2e?q=80&w=1000',
-      'https://images.unsplash.com/photo-1507034589631-9433cc6bc453?q=80&w=1000'
-    ]
-  },
-  {
-    id: '3',
-    title: 'Rock Climbing',
-    price: '250',
-    rating: '4.6',
-    images: [
-      'https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=1000',
-      'https://images.unsplash.com/photo-1601224335112-483e8de232fa?q=80&w=1000',
-      'https://images.unsplash.com/photo-1516592066927-de81b1a3db20?q=80&w=1000'
-    ]
-  },
-  {
-    id: '4',
-    title: 'Rock Climbing',
-    price: '250',
-    rating: '4.6',
-    images: [
-      'https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=1000',
-      'https://images.unsplash.com/photo-1601224335112-483e8de232fa?q=80&w=1000',
-      'https://images.unsplash.com/photo-1516592066927-de81b1a3db20?q=80&w=1000'
-    ]
-  },
-  {
-    id: '5',
-    title: 'Rock Climbing',
-    price: '250',
-    rating: '4.6',
-    images: [
-      'https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=1000',
-      'https://images.unsplash.com/photo-1601224335112-483e8de232fa?q=80&w=1000',
-      'https://images.unsplash.com/photo-1516592066927-de81b1a3db20?q=80&w=1000'
-    ]
-  },
-];
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
 
-function ActivityCard({ activity,navigation }) {
+function ActivityCard({ activity,navigation,locationid }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const handleScroll = (event) => {
@@ -82,10 +28,10 @@ function ActivityCard({ activity,navigation }) {
           onScroll={handleScroll}
           scrollEventThrottle={16}
         >
-          {activity.images.map((image, index) => (
+          {activity.image_url.map((image, index) => (
              <TouchableOpacity
              key={index}
-             onPress={() => navigation.navigate('DetailedScreen', { activity })}
+             onPress={() => navigation.navigate('DetailedScreen', { activity,locationid })}
            >
             <Image
               key={index}
@@ -97,7 +43,7 @@ function ActivityCard({ activity,navigation }) {
           ))}
         </ScrollView>
         <View style={styles.imageIndicators}>
-          {activity.images.map((_, index) => (
+          {activity.image_url.map((_, index) => (
             <View
               key={index}
               style={[
@@ -110,10 +56,10 @@ function ActivityCard({ activity,navigation }) {
       </View>
       <View style={styles.cardContent}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>{activity.title}</Text>
+          <Text style={styles.title}>{activity.name}</Text>
           <View style={styles.ratingContainer}>
             <Ionicons name="star" size={wp('4%')} color="#FFD700" />
-            <Text style={styles.rating}>{activity.rating}</Text>
+            <Text style={styles.rating}>{activity.customer_rating}</Text>
           </View>
         </View>
         <Text style={styles.price}>Avg ₹ {activity.price} for one</Text>
@@ -123,6 +69,42 @@ function ActivityCard({ activity,navigation }) {
 }
 
 export default function Overview({navigation}) {
+  const [activities, setactivities] = useState([]);
+  const[locationid,setlocationid]=useState();
+    useEffect(() => {
+        const getactivities = async () => {
+          try {
+            const authToken = await AsyncStorage.getItem("authToken");
+            const locationId = await AsyncStorage.getItem("locationid");
+            setlocationid(locationId);
+            if (!authToken || !locationId) {
+              console.error("Auth token or Location ID missing");
+              return;
+            }
+      
+            const response = await axios.get(`${API_URL}/task`, {
+              params: { 
+                location_id: locationId,
+                id_deleted: false 
+              },
+            });
+            
+      
+            console.log("👼👼👼👼",JSON.stringify(response.data,null,2));
+            if (response.data && Array.isArray(response.data)) {
+              
+              setactivities(response.data);
+
+            } else {
+              console.error("Unexpected API response format", response.data.transformedTasks);
+            }
+          } catch (error) {
+            console.error("Error fetching shops:", error);
+          }
+        };
+      
+        getactivities();
+      }, []);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -138,9 +120,14 @@ export default function Overview({navigation}) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom:hp("10%")}}
       >
-        {activities.map(activity => (
-          <ActivityCard key={activity.id} activity={activity} navigation={navigation}/>
-        ))}
+      {activities && activities.length > 0 ? (
+  activities.map((activity) => (
+    <ActivityCard key={activity._id} activity={activity} navigation={navigation} locationid={locationid}/>
+  ))
+) : (
+  <Text>Loading...</Text>
+)}
+
       </ScrollView>
     </View>
   );

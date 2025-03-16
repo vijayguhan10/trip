@@ -19,6 +19,8 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { Rating } from "react-native-ratings";
+import ToastManager, { Toast } from "toastify-react-native";
 // const topPicks = [
 //   {
 //     image:
@@ -86,10 +88,48 @@ const Fooddetails = ({ navigation }) => {
   const [reviewTitle, setReviewTitle] = useState("");
   const [reviewText, setReviewText] = useState("");
   const [shopFood, setShopFood] = useState([]);
+    const [fillallfield, setFillAllField] = useState("");
+    const [rating, setRating] = useState(0);
+  const[Shopid,setshopid]=useState();
   const restaurntId = route.params?.restaurant_id;
   const shop = route.params?.shop;
   console.log("Restaurant Id reached:", restaurntId);
-
+  const handlesubmit=async()=>{
+    console.log("😍😍😍😍")
+    const authToken = await AsyncStorage.getItem("authToken");
+    const locationId = await AsyncStorage.getItem("locationid");
+    if (!rating || !reviewText || !reviewTitle) {
+      setFillAllField("⚠ Fill all fields before submitting.");
+      
+      setTimeout(() => {
+        setFillAllField("");
+      }, 5000);
+  
+      return;
+    }
+    setFillAllField(""); 
+    console.log(rating,Shopid)
+    console.log("😍😍😍😍")
+    const response=await axios.post(`${API_URL}/review`,{business_id:Shopid,business_type:"Restaurant",title:reviewTitle,rating:rating,description:reviewText},{
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if(response.status===201){
+      setModalVisible(false);
+      setRating(0);
+      setReviewTitle("")
+      setReviewText("")
+      Toast.success("Review added");
+    }
+  
+  }
+  const handleopenmodal=(shopid)=>{
+    console.log(shopid)
+    setshopid(shopid);
+    setModalVisible(true);
+  }
   const GetFood = async () => {
     try {
       console.log("API URL data:", API_URL);
@@ -145,6 +185,7 @@ const Fooddetails = ({ navigation }) => {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <ToastManager />
       <View style={styles.icon}>
         <Icon
           name="arrow-left"
@@ -195,7 +236,7 @@ const Fooddetails = ({ navigation }) => {
         </View>
         <TouchableOpacity
           style={styles.reviewbutton}
-          onPress={() => setModalVisible(true)}
+          onPress={()=>{handleopenmodal(shop._id)}}
         >
           <Text style={{ color: "white", fontWeight: "bold" }}>Add review</Text>
         </TouchableOpacity>
@@ -291,44 +332,58 @@ const Fooddetails = ({ navigation }) => {
           </View>
         );
       })}
-      <Modal visible={modalVisible} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Icon name="close" size={15} color="white" />
-            </TouchableOpacity>
-
-            <Text style={styles.modalTitle}>Add Review</Text>
-
-            <Text style={styles.inputLabel}>Title</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter review title..."
-              placeholderTextColor="#999"
-              value={reviewTitle}
-              onChangeText={setReviewTitle}
-            />
-
-            <Text style={styles.inputLabel}>Description</Text>
-            <TextInput
-              style={[styles.input, styles.descriptionInput]}
-              placeholder="Write your review..."
-              placeholderTextColor="#999"
-              value={reviewText}
-              onChangeText={setReviewText}
-              multiline
-              numberOfLines={5}
-            />
-
-            <TouchableOpacity style={styles.submitButton}>
-              <Text style={styles.submitButtonText}>Add Review</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+       <Modal visible={modalVisible} transparent animationType="slide">
+             <View style={styles.modalOverlay}>
+               <View style={styles.modalContainer}>
+                 <TouchableOpacity
+                   style={styles.closeButton}
+                   onPress={() => setModalVisible(false)}
+                 >
+                   <Icon name="close" size={15} color="white" />
+                 </TouchableOpacity>
+     
+                 <Text style={styles.modalTitle}>Add Review</Text>
+                 {fillallfield ? <Text style={styles.errorText}>{fillallfield}</Text> : null}
+     
+                 <Text style={styles.inputLabel}>Rating</Text>
+                 <Rating
+             type="star"
+             ratingCount={5}
+             imageSize={30}
+             startingValue={rating}
+             onFinishRating={(value) => setRating(value)}
+             style={{ marginBottom: hp("2%") }}
+           />
+     
+                 <Text style={styles.inputLabel}>Title</Text>
+                 <TextInput
+                   style={styles.input}
+                   placeholder="Enter review title..."
+                   placeholderTextColor="#999"
+                   value={reviewTitle}
+                   onChangeText={setReviewTitle}
+                 />
+     
+                 <Text style={styles.inputLabel}>Description</Text>
+                 <TextInput
+                   style={[styles.input, styles.descriptionInput]}
+                   placeholder="Write your review..."
+                   placeholderTextColor="#999"
+                   value={reviewText}
+                   onChangeText={setReviewText}
+                   multiline
+                   numberOfLines={5}
+                 />
+     
+                 <TouchableOpacity
+                   style={styles.submitButton}
+                   onPress={handlesubmit}
+                 >
+                   <Text style={styles.submitButtonText}>Add Review</Text>
+                 </TouchableOpacity>
+               </View>
+             </View>
+           </Modal>
     </ScrollView>
   );
 };
