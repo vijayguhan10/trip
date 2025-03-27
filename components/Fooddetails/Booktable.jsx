@@ -1,29 +1,109 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Pressable, TextInput,Modal,TouchableOpacity,Image} from "react-native";
+import { View, Text, StyleSheet, Pressable, TextInput,Modal,TouchableOpacity,Image,Alert} from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Icon } from "react-native-elements";
 import { DatePickerModal } from "react-native-paper-dates";
-
+import { useRoute } from "@react-navigation/native";
+import axios from "axios";
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+ 
 const Booktable = ({ navigation }) => {
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [modalVisible, setModalVisible] = useState(false);
+   const route = useRoute();
+   const restaurntId = route.params?.restaurantid;
+   console.log(restaurntId)
+    // States for inputs
+    const [totalMembers, setTotalMembers] = useState("");
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [bookedTime, setBookedTime] = useState("");
+    const [advanceAmt, setAdvanceAmt] = useState("");
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+   const validateForm = () => {
+      if (!totalMembers.trim()) {
+        Alert.alert("Error", "Please enter the total members.");
+        return false;
+      }
+      if (!bookedTime.trim()) {
+        Alert.alert("Error", "Please enter the booking time.");
+        return false;
+      }
+      if (!advanceAmt.trim()) {
+        Alert.alert("Error", "Please enter the advance amount.");
+        return false;
+      }
+      return true;
+    };
+  
+    const handleSubmit = async () => {
+      if (!validateForm()) return;
+  
+      try {
+        const authToken = await AsyncStorage.getItem("authToken");
+  
+        const payload = {
+          business_id: restaurntId,
+          totalMembers: parseInt(totalMembers),
+          date: selectedDate.toDateString(),
+          bookedTime: bookedTime.trim(),
+          type: "Restaurant",
+          advance_Amt: parseFloat(advanceAmt) || 0,
+        };
+  
+        const response = await axios.post(`${API_URL}/reservation/book`, payload, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+  
+        if (response.status === 201) {
+          setModalVisible(true);
+          setTotalMembers("")
+          setAdvanceAmt("");
+          setBookedTime("")
+        } else {
+          Alert.alert("Error", "Booking failed, please try again.");
+        }
+      } catch (error) {
+        Alert.alert("Error", "Something went wrong. Please try again later.");
+      }
+    };
+  
   return (
     <View style={styles.container}>
       <View style={styles.icon}>
-        <Icon name="arrow-left" type="feather" size={24} color="black" onPress={() => navigation.goBack()} />
+        <Icon
+          name="arrow-left"
+          type="feather"
+          size={24}
+          color="black"
+          onPress={() => navigation.goBack()}
+        />
       </View>
       <View style={styles.maincontainer}>
         <View style={styles.header}>
-          <Text style={styles.headertext}>Book a table now {"\n"}to get 20% on {"\n"}your order</Text>
+          <Text style={styles.headertext}>
+            Book a table now {"\n"}to get 20% on {"\n"}your order
+          </Text>
         </View>
         <View style={styles.form}>
           <Text style={styles.label}>Total members</Text>
-          <TextInput style={styles.input} placeholder="Enter members" placeholderTextColor="#999" />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter members"
+            keyboardType="numeric"
+            placeholderTextColor="#999"
+            value={totalMembers}
+            onChangeText={setTotalMembers}
+          />
           <Text style={styles.label}>Day</Text>
-          <Pressable style={styles.input} onPress={() => setDatePickerVisibility(true)}>
+          <Pressable
+            style={styles.input}
+            onPress={() => setDatePickerVisibility(true)}
+          >
             <Text style={styles.inputText}>{selectedDate.toDateString()}</Text>
-            <Icon name="calendar" type="material-community" size={wp("6%")}/>
+            <Icon name="calendar" type="material-community" size={wp("6%")} />
           </Pressable>
           <DatePickerModal
             locale="en"
@@ -31,39 +111,63 @@ const Booktable = ({ navigation }) => {
             visible={isDatePickerVisible}
             onDismiss={() => setDatePickerVisibility(false)}
             date={selectedDate}
-            onConfirm={(params) => {
-              setSelectedDate(params.date);
+            onConfirm={({ date }) => {
+              setSelectedDate(date);
               setDatePickerVisibility(false);
             }}
+            
           />
           <Text style={styles.label}>Time</Text>
-          <TextInput style={styles.input} placeholder="Select time" placeholderTextColor="#999" />
-          <Text style={styles.reserveText}>Reserve Your Table with a Small Advance!</Text>
-          <TextInput style={styles.input} placeholder="Enter Amount - ₹ 100" placeholderTextColor="#999" />
+          <TextInput
+            style={styles.input}
+            placeholder="Select time (e.g., 12:00 PM)"
+            placeholderTextColor="#999"
+            value={bookedTime}
+            onChangeText={setBookedTime}
+          />
+          <Text style={styles.reserveText}>
+            Reserve Your Table with a Small Advance!
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Amount - ₹ 100"
+            keyboardType="numeric"
+            placeholderTextColor="#999"
+            value={advanceAmt}
+            onChangeText={setAdvanceAmt}
+          />
         </View>
-        <Pressable style={styles.button} onPress={()=>setModalVisible(true)}>
+        <Pressable style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Book My Table</Text>
         </Pressable>
       </View>
       <Modal visible={modalVisible} transparent animationType="fade">
-      <View style={styles.modalOverlay}>
-        <View style={styles.successPopup}>
-                   <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-                     <Icon name="close" size={15} color="white" />
-                   </TouchableOpacity>
+        <View style={styles.modalOverlay}>
+          <View style={styles.successPopup}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Icon name="close" size={15} color="white" />
+            </TouchableOpacity>
 
+            <Image
+              source={{
+                uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-qYFE9pg-7oly7Ge7LnDsuqIPQmvdbwae4g&s",
+              }}
+              style={styles.image}
+              resizeMode="contain"
+            />
 
-          <Image
-            source={{ uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-qYFE9pg-7oly7Ge7LnDsuqIPQmvdbwae4g&s" }} 
-            style={styles.image}
-            resizeMode="contain"
-          />
-
-          <Text style={styles.successText}>Thank you! Booking has been Confirmed!</Text>
-          <Text style={styles.subText}>Please check your inbox for table confirmation details.</Text>
+            <Text style={styles.successText}>
+              Thank you! Booking has been Confirmed!
+            </Text>
+            <Text style={styles.subText}>
+              Please check your inbox for table confirmation details.
+            </Text>
+          </View>
         </View>
-      </View>
-    </Modal>
+      </Modal>
     </View>
   );
 };

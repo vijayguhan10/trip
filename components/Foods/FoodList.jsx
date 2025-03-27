@@ -46,7 +46,7 @@ const categories = [
   },
 ];
 
-const FoodList = ({ navigation }) => {
+const FoodList = ({ navigation,vegMode  }) => {
   const [Restaturnts, SetRestaurunts] = useState([]);
   const [Loading, setLoading] = useState([]);
   const [token, settoken] = useState();
@@ -70,23 +70,35 @@ const FoodList = ({ navigation }) => {
         }
       );
 
-      console.log(
-        "Response data for the food : ",
-        JSON.stringify(response.data, null, 2)
-      );
+      // console.log(
+      //   "Response data for the food : ",
+      //   JSON.stringify(response.data, null, 2)
+      // );
 
       if (!Array.isArray(response.data)) {
         throw new Error("Invalid API Response: Expected an array");
       }
-
+      let filteredRestaurants = response.data;
+      if (vegMode) {
+        console.log("Filtering veg restaurants");
+        filteredRestaurants = filteredRestaurants.filter(restaurant =>
+          restaurant.category.some(cat => cat.toLowerCase() === "veg")
+        );
+        console.log(JSON.stringify(filteredRestaurants, null, 2));
+      }
+       else {
+        // Show only restaurants that have 'NonVeg' in their category
+        filteredRestaurants = filteredRestaurants.filter(restaurant =>
+          restaurant.category.some(cat => cat.toLowerCase().includes("non-veg"))
+        );
+      }
       if (category) {
-        const filteredRestaurants = response.data.filter((restaurant) =>
+        filteredRestaurants = filteredRestaurants.filter(restaurant =>
           restaurant.category.includes(category.toLowerCase())
         );
-        SetRestaurunts(filteredRestaurants);
-      } else {
-        SetRestaurunts(response.data);
       }
+  
+      SetRestaurunts(filteredRestaurants);
     } catch (error) {
       console.error("Error fetching places:", error.message || error);
     }
@@ -94,7 +106,7 @@ const FoodList = ({ navigation }) => {
 
   useEffect(() => {
     GetFood();
-  }, []);
+  }, [vegMode]);
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headerContainer}>
@@ -130,6 +142,11 @@ const FoodList = ({ navigation }) => {
       />
 
       <Text style={styles.subHeading}>Must try Restaurants</Text>
+      {Restaturnts.length === 0 ? (
+  <Text style={{ textAlign: "center", fontSize: 18, marginTop: 20, color: "red" }}>
+    No Restaurants Available
+  </Text>
+) : (
       <FlatList
         data={Restaturnts}
         keyExtractor={(item) => item._id} // Fix key extractor
@@ -210,6 +227,7 @@ const FoodList = ({ navigation }) => {
           </TouchableOpacity>
         )}
       />
+    )}
     </ScrollView>
   );
 };
