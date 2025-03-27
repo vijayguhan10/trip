@@ -659,7 +659,7 @@ const styles = StyleSheet.create({
     padding: wp("4%"),
     borderRadius: 12,
     marginBottom: 12,
-    marginTop:15,
+    marginTop: 15,
     borderWidth: 1,
     borderColor: "#E6DED9",
   },
@@ -686,7 +686,7 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
     justifyContent: "center",
-    marginTop:5,
+    marginTop: 5,
     maxWidth: "70%",
   },
 

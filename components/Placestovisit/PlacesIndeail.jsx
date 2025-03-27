@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   Linking 
 } from "react-native";
-import { WebView } from "react-native-webview";
 
 import { useRoute } from "@react-navigation/native";
 import {
@@ -105,7 +104,7 @@ const PlacesIndetail = () => {
 <View style={styles.mapContainer}>
 <TouchableOpacity onPress={() => Linking.openURL(destination.map_link)}>
 
-  <WebView
+  {/* <WebView
     source={{
       html: `
         <html>
@@ -123,7 +122,7 @@ const PlacesIndetail = () => {
       `,
     }}
     style={styles.mapimage}
-  />
+  /> */}
     </TouchableOpacity>
 
 </View>
