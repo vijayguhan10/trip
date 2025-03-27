@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -13,62 +14,118 @@ import axios from "axios";
 import { Icon } from "react-native-elements";
 import { API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Location from "expo-location";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import Sidebar from "../SideBar";
-
-const activities = [
-  {
-    id: "1",
-    title: "Activity 1",
-    image:
-      "https://img.freepik.com/premium-photo/sunset-view-mountains-mountains_865967-1116351.jpg",
-  },
-  {
-    id: "2",
-    title: "Activity 2",
-    image:
-      "https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718",
-  },
-];
-const destinations = [
-  {
-    id: "1",
-    title: "Shaniwar Wada",
-    imageUri:
-      "https://www.treksandtrails.org/system/images/000/510/515/42febd05a4c462bbf831f6e444ef3801/x600gt/Kalavantin-Durg.jpg?1628950718",
-    navigate: true,
-  },
-  {
-    id: "2",
-    title: "Sinhagad Fort",
-    imageUri:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtD6NqBnrOrK4UcNa9X3uBuRFBx1TcXBcn2Q&s",
-  },
-  {
-    id: "3",
-    title: "Mulshi Dam",
-    imageUri:
-      "https://images.unsplash.com/photo-1533130061792-64b345e4a833?ixid=M3wxMzcxOTN8MHwxfHNlYXJjaHwyfHxtb3VudGFpbiUyMHBlYWt8ZW58MHx8fHwxNjg0MTQ4OTI3fDA&ixlib=rb-4.0.3&fm=jpg&w=3300&h=2200&fit=max",
-  },
-  {
-    id: "4",
-    title: "Mulshi Dam",
-    imageUri:
-      "https://images.unsplash.com/photo-1533130061792-64b345e4a833?ixid=M3wxMzcxOTN8MHwxfHNlYXJjaHwyfHxtb3VudGFpbiUyMHBlYWt8ZW58MHx8fHwxNjg0MTQ4OTI3fDA&ixlib=rb-4.0.3&fm=jpg&w=3300&h=2200&fit=max",
-  },
-];
+const WEATHER_API_KEY = "4b9b8688eca407ea3546cf525c8f03cb";
 const HomeScreen = ({ navigation }) => {
   const [topDestinations, setTopDestinations] = useState([]);
   const [topActivities, setTopActivities] = useState([]);
-  const[token,settoken]=useState();
+  const [token, setToken] = useState();
+  const [weatherData, setWeatherData] = useState(null);
+  const [location, setLocation] = useState("Loading location...");
+  const [loadingWeather, setLoadingWeather] = useState(true);
+  const [currentDate, setCurrentDate] = useState("");
+  const [cityName, setCityName] = useState("Pune");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const formatDate = () => {
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    const today = new Date();
+    return today.toLocaleDateString("en-US", options);
+  };
+
+  const getWeatherIcon = (condition) => {
+    const icons = {
+      clear: "https://cdn-icons-png.flaticon.com/512/6974/6974833.png",
+      clouds: "https://cdn-icons-png.flaticon.com/512/414/414927.png",
+      rain: "https://cdn-icons-png.flaticon.com/512/4150/4150904.png",
+      snow: "https://cdn-icons-png.flaticon.com/512/6428/6428699.png",
+      thunderstorm: "https://cdn-icons-png.flaticon.com/512/5902/5902602.png",
+      drizzle: "https://cdn-icons-png.flaticon.com/512/3076/3076129.png",
+      mist: "https://cdn-icons-png.flaticon.com/512/1197/1197102.png",
+      default: "https://cdn-icons-png.flaticon.com/512/979/979585.png",
+    };
+
+    condition = condition.toLowerCase();
+    return icons[condition] || icons["default"];
+  };
+
+  const fetchWeatherData = async (city = "Pune") => {
+    try {
+      setLoadingWeather(true);
+      const response = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${WEATHER_API_KEY}`
+      );
+
+      const data = response.data;
+      setWeatherData({
+        temp: Math.round(data.main.temp),
+        condition: data.weather[0].main,
+        icon: getWeatherIcon(data.weather[0].main),
+        humidity: data.main.humidity,
+        windSpeed: data.wind.speed,
+      });
+      setLocation(`${data.name}, ${data.sys.country}`);
+      setCityName(data.name);
+    } catch (error) {
+      setWeatherData({
+        temp: 25,
+        condition: "Clear",
+        icon: getWeatherIcon("clear"),
+        humidity: 60,
+        windSpeed: 5,
+      });
+      setLocation("Pune, India");
+    } finally {
+      setLoadingWeather(false);
+    }
+  };
+
+  const getCityFromCoords = async (lat, lon) => {
+    try {
+      const response = await axios.get(
+        `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${WEATHER_API_KEY}`
+      );
+      if (response.data && response.data.length > 0) {
+        return response.data[0].name;
+      }
+      return "Pune";
+    } catch (error) {
+      return "Pune";
+    }
+  };
+
+  const getCurrentLocation = async () => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        return "Pune";
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      const city = await getCityFromCoords(
+        location.coords.latitude,
+        location.coords.longitude
+      );
+      return city;
+    } catch (error) {
+      return "Pune";
+    }
+  };
 
   const GetPlaces = async () => {
     try {
       const authToken = await AsyncStorage.getItem("authToken");
-    settoken(authToken);
+      setToken(authToken);
       const destinationId = await AsyncStorage.getItem("locationid");
       if (!destinationId) throw new Error("Destination ID not found");
 
@@ -76,42 +133,66 @@ const HomeScreen = ({ navigation }) => {
         `${API_URL}/destination/${destinationId}`,
         {
           headers: {
-            Authorization: `Bearer ${authToken}`, 
+            Authorization: `Bearer ${authToken}`,
             "Content-Type": "application/json",
           },
         }
       );
-  
+
       if (!response.data || !response.data.data)
         throw new Error("Invalid API Response");
 
       const places = response.data.data || [];
-      console.log("Fetched Places:", JSON.stringify(places, null, 2));
-
       const destinations = places.filter((place) => !place.top_activities);
       const activities = places.filter((place) => place.top_activities);
       setTopDestinations(destinations);
       setTopActivities(activities);
-    } catch (error) {
-      console.error("Error fetching places:", error.message || error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
-    GetPlaces();
+    const init = async () => {
+      setCurrentDate(formatDate());
+      const city = await getCurrentLocation();
+      await fetchWeatherData(city);
+      await GetPlaces();
+    };
+    init();
   }, []);
-
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-    console.log("Sidebar state:", isSidebarOpen);
   };
 
   const closeSidebar = () => {
     if (isSidebarOpen) {
       setIsSidebarOpen(false);
     }
+  };
+
+  const WeatherDisplay = () => {
+    if (loadingWeather || !weatherData) {
+      // return <View style={styles.WetherReportContainer}></View>;
+    }
+    return (
+      <View style={styles.WetherReportContainer}>
+        <Image source={{ uri: weatherData.icon }} style={styles.weatherIcon} />
+        <View style={styles.WetherReport}>
+          <Text style={styles.temperatureText}>
+            {weatherData.temp}°<Text style={styles.celcius}>C</Text>
+          </Text>
+          <Text>{weatherData.condition}</Text>
+          <View style={styles.weatherDetails}>
+            <Text style={styles.weatherDetailText}>
+              💧 {weatherData.humidity}%
+            </Text>
+            <Text style={styles.weatherDetailText}>
+              🌬️ {weatherData.windSpeed} m/s
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
   };
 
   return (
@@ -140,23 +221,10 @@ const HomeScreen = ({ navigation }) => {
           <ScrollView contentContainerStyle={{ paddingBottom: hp("10%") }}>
             <View style={styles.weatherContainer}>
               <View style={styles.wetherLocation}>
-                <Text style={styles.locationText}>📍 Pune, India</Text>
-                <Text style={styles.DateText}>Thursday, October 10</Text>
+                <Text style={styles.locationText}>📍 {location}</Text>
+                <Text style={styles.DateText}>{currentDate}</Text>
               </View>
-              <View style={styles.WetherReportContainer}>
-                <Image
-                  source={{
-                    uri: "https://static.vecteezy.com/system/resources/thumbnails/008/854/797/small_2x/sunny-and-rainy-cloudy-day-weather-forecast-icon-meteorological-sign-3d-render-png.png",
-                  }}
-                  style={styles.weatherIcon}
-                />
-                <View style={styles.WetherReport}>
-                  <Text style={styles.temperatureText}>
-                    19°<Text style={styles.celcius}>C</Text>
-                  </Text>
-                  <Text>Rainy</Text>
-                </View>
-              </View>
+              <WeatherDisplay />
             </View>
 
             <View style={styles.categoriesContainer}>
@@ -225,7 +293,6 @@ const CategoryItem = ({ title }) => (
 );
 
 const DestinationItem = ({ title, imageUri }) => {
-  console.log("DestinationItem:", title, imageUri);
   return (
     <View style={styles.destinationItem}>
       <Image source={{ uri: imageUri }} style={styles.destinationImage} />
@@ -278,13 +345,13 @@ const styles = StyleSheet.create({
   },
   locationText: { fontSize: wp("4%"), fontFamily: "Noir_Regular" },
   DateText: { paddingLeft: wp("6%"), fontFamily: "LufgaLight" },
-  weatherIcon: { width: wp("20%"), height: hp("6%") },
+  weatherIcon: { width: wp("17%"), height: hp("6%") },
   WetherReport: {
     flexDirection: "column",
   },
   WetherReportContainer: {
     flexDirection: "row",
-    marginLeft: wp("15%"),
+    marginLeft: wp("5%"),
   },
   temperatureText: {
     fontSize: wp("5%"),
