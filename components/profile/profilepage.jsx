@@ -7,15 +7,23 @@ import { API_URL } from "@env";
 import ToastManager, { Toast } from "toastify-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from 'axios';
+import {jwtDecode} from "jwt-decode"; // Import jwt-decode
+
 const Profilescreen = ({ navigation }) => {
    const [bookingId, setBookingId] = useState("");
      const[token,settoken]=useState();
      const[data,setdata]=useState();
+     const [agentLogo, setAgentLogo] = useState("");
+const[companyname,setcompanyname]=useState();
    
    useEffect(()=>{
     const getdata=async()=>{
       const authToken = await AsyncStorage.getItem("authToken");
       settoken(authToken);
+      if (authToken) {
+        const decodedToken = jwtDecode(authToken);
+        setAgentLogo(decodedToken.agent_logo);
+      }
       const response = await axios.get(
         `${API_URL}/booking/profile`,
         {
@@ -25,9 +33,15 @@ const Profilescreen = ({ navigation }) => {
           },
         }
       );
-      console.log(response.data);
+      console.log(
+        JSON.stringify(response.data, null, 2)
+      );
       setdata(response.data);
 
+      const companyName = data.agent_id.company_name;
+      console.log(companyName); 
+      setcompanyname(companyName)
+     
      
     }
     getdata();
@@ -35,40 +49,43 @@ const Profilescreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Profile</Text>
       </View>
-      
+
       <View style={styles.profileContainer}>
-  <View style={styles.profileHeader}>
-    <Image
-      source={{ 
-        uri: "https://s3-alpha-sig.figma.com/img/44b3/9dae/f7b8d9642d79c4d7aa93f9b95ca7a006?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=VbWRgFdKRgubmu4OCPj40WLsnzqhAOym7l-qC34kfgGWTOpKb4wny2X8bI~P04jxYprVcVUbDUtxFFqkOz6JGiKhbCzWTb~RZLInR~ex0fZd~Y5vJ~~YuePtIBoROXfUgAuHVcF84l-JjLsUzNCP7-DBifgICfsoQxoZ~W906MyT-SIwQ0hsQvapnk0azm~xZenRIz5oCNHPYxdnayXZNt-32j9fFKnrcsWvcGLZqP9CLkndE03fA11urIdA1Yl0QCFl3m4a-RSA3jR1YIX5RDC9UdyKxx07M5d9Tg1HHkB5LUFRBRs2TCrKPQAJ2paoAUV1oFakggEY7~CeYt8qOw__",
-      }}
-      style={styles.profileImage}
-    />
-    <Text style={styles.profileName}>Travino</Text>
-  </View>
-  <View style={styles.top}></View>
+        <View style={styles.profileHeader}>
+          <Image source={{ uri: agentLogo }} style={styles.profileImage} />
 
-  <View style={styles.input}>
-    <Text style={styles.textStyle}>John Doe</Text>
-  </View>
-  <View style={styles.input}>
-    <Text style={styles.textStyle}>XYZ Agency</Text>
-  </View>
-  <View style={styles.input}>
-    <Text style={styles.textStyle}>Michael Smith</Text>
-  </View>
+          <Text style={styles.profileName}>{data?.agent_id?.company_name}</Text>
+        </View>
+        <View style={styles.top}></View>
 
-  <View style={styles.phoneContainer}>
-    <Ionicons name="call" size={20} color="#000" style={styles.phoneIcon} />
-    <Text style={styles.textStyle}>+91 xxxxxxxxx</Text>
-  </View>
-</View>
+        <View style={styles.input}>
+          <Text style={styles.textStyle}>{data?.name}</Text>
+        </View>
+        <View style={styles.input}>
+          <Text style={styles.textStyle}>{data?.agent_id?.company_name}</Text>
+        </View>
+        <View style={styles.input}>
+          <Text style={styles.textStyle}>{data?.agent_id?.name}</Text>
+        </View>
 
+        <View style={styles.phoneContainer}>
+          <Ionicons
+            name="call"
+            size={20}
+            color="#000"
+            style={styles.phoneIcon}
+          />
+          <Text style={styles.textStyle}>+91 {data?.phone_number}</Text>
+        </View>
+      </View>
     </SafeAreaView>
   );
 };

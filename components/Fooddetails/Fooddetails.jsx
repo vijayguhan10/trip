@@ -21,48 +21,7 @@ import {
 } from "react-native-responsive-screen";
 import { Rating } from "react-native-ratings";
 import ToastManager, { Toast } from "toastify-react-native";
-// const topPicks = [
-//   {
-//     image:
-//       "https://images.unsplash.com/photo-1630383249896-424e482df921?w=300&h=200&fit=crop",
-//     title: "Masala Dosa",
-//     description:
-//       "It's traditionally filled with a spiced potato mixture made with onions, mustard seeds, curry leaves, and turmeric.",
-//     price: "149",
-//   },
-//   {
-//     image:
-//       "https://images.unsplash.com/photo-1630383249896-424e482df921?w=300&h=200&fit=crop",
-//     title: "Masala Dosa",
-//     description:
-//       "It's traditionally filled with a spiced potato mixture made with onions, mustard seeds, curry leaves, and turmeric.",
-//     price: "149",
-//   },
-// ];
 
-// const recommendedDishes = [
-//   {
-//     image:
-//       "https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop",
-//     title: "Steam Idli",
-//     description:
-//       "Idli is a traditional South Indian dish made from fermented rice and urad dal (black gram) batter, steamed into soft, fluffy cakes.",
-//   },
-//   {
-//     image:
-//       "https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop",
-//     title: "Medu Wada",
-//     description:
-//       "Medu Wada is a South Indian doughnut-shaped fritter made with urad dal, crispy on the outside and soft inside.",
-//   },
-//   {
-//     image:
-//       "https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop",
-//     title: "Medu Wada",
-//     description:
-//       "Medu Wada is a South Indian doughnut-shaped fritter made with urad dal, crispy on the outside and soft inside.",
-//   },
-// ];
 
 const DishCard = ({ image, title, description, price }) => (
   <TouchableOpacity style={styles.dishCard}>
@@ -219,7 +178,7 @@ const Fooddetails = ({ navigation }) => {
         <Text>{shop?.single_line_address}</Text>
         <TouchableOpacity
           style={styles.bookatablebutton}
-          onPress={() => navigation.navigate("Booktable")}
+          onPress={() => navigation.navigate("Booktable",{restaurantid:restaurntId})}
         >
           <Text style={{ color: "white", fontWeight: "bold" }}>
             Book a Table
