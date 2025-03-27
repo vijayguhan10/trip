@@ -25,6 +25,10 @@ import OnboardingScreen from "./components/Landingpage/Landingpage";
 import Booktable from "./components/Fooddetails/Booktable";
 import Productscreen from "./components/Products/productscreen";
 import PlacesIndetail from "./components/Placestovisit/PlacesIndeail";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {jwtDecode} from "jwt-decode";
+import { useEffect, useState } from "react";
+
 // import { API_URL, SECRET_KEY } from '@env'
 // console.log(API_URL);
 
@@ -153,6 +157,8 @@ function SlotBooking() {
 }
 
 export default function App() {
+  const [initialRoute, setInitialRoute] = useState(null);
+
   
   const [fontsLoaded, fontError] = useFonts({
     Noir_Regular: require("./assets/fonts/Comfortaa-VariableFont_wght.ttf"),
@@ -177,6 +183,39 @@ export default function App() {
     LufgaThin: require("./assets/fonts/lufga/LufgaThin.ttf"),
     LufgaThinItalic: require("./assets/fonts/lufga/LufgaThinItalic.ttf"),
   });
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+
+        if (token) {
+          const decodedToken = jwtDecode(token);
+          const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
+
+          if (decodedToken.exp > currentTime) {
+            setInitialRoute("Home");
+          } else {
+            await AsyncStorage.removeItem("token"); // Remove expired token
+            setInitialRoute("Login");
+          }
+        } else {
+          setInitialRoute("Login");
+        }
+      } catch (error) {
+        console.error("Error checking token:", error);
+        setInitialRoute("Login");
+      }
+    };
+
+    checkAuth();
+  }, []);
+  if (initialRoute === null) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   if (fontsLoaded) {
     console.log("fonts loaded sucessfully : ", fontsLoaded);
@@ -192,7 +231,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Login"
+        initialRouteName={initialRoute} 
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="Login" component={LoginScreen} />

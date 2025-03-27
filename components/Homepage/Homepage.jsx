@@ -172,8 +172,9 @@ const HomeScreen = ({ navigation }) => {
 
   const WeatherDisplay = () => {
     if (loadingWeather || !weatherData) {
-      // return <View style={styles.WetherReportContainer}></View>;
+      return <View style={styles.WetherReportContainer}></View>;
     }
+
     return (
       <View style={styles.WetherReportContainer}>
         <Image source={{ uri: weatherData.icon }} style={styles.weatherIcon} />
@@ -182,14 +183,7 @@ const HomeScreen = ({ navigation }) => {
             {weatherData.temp}°<Text style={styles.celcius}>C</Text>
           </Text>
           <Text>{weatherData.condition}</Text>
-          <View style={styles.weatherDetails}>
-            <Text style={styles.weatherDetailText}>
-              💧 {weatherData.humidity}%
-            </Text>
-            <Text style={styles.weatherDetailText}>
-              🌬️ {weatherData.windSpeed} m/s
-            </Text>
-          </View>
+         
         </View>
       </View>
     );
@@ -234,7 +228,7 @@ const HomeScreen = ({ navigation }) => {
             </View>
 
             <Text style={styles.sectionTitle}>Top Destinations</Text>
-            <View>
+            <View style={{marginLeft:wp('5%')}}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {topDestinations.map((item) => (
                   <TouchableOpacity
@@ -345,13 +339,13 @@ const styles = StyleSheet.create({
   },
   locationText: { fontSize: wp("4%"), fontFamily: "Noir_Regular" },
   DateText: { paddingLeft: wp("6%"), fontFamily: "LufgaLight" },
-  weatherIcon: { width: wp("17%"), height: hp("6%") },
+  weatherIcon: { width: wp("15%"), height: hp("5%") },
   WetherReport: {
     flexDirection: "column",
   },
   WetherReportContainer: {
     flexDirection: "row",
-    marginLeft: wp("5%"),
+    marginLeft: wp("12%"),
   },
   temperatureText: {
     fontSize: wp("5%"),

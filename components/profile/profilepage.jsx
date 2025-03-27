@@ -1,9 +1,37 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-
+import { useState } from "react";
+import { API_URL } from "@env";
+import ToastManager, { Toast } from "toastify-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from 'axios';
 const Profilescreen = ({ navigation }) => {
+   const [bookingId, setBookingId] = useState("");
+     const[token,settoken]=useState();
+     const[data,setdata]=useState();
+   
+   useEffect(()=>{
+    const getdata=async()=>{
+      const authToken = await AsyncStorage.getItem("authToken");
+      settoken(authToken);
+      const response = await axios.get(
+        `${API_URL}/booking/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`, 
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data);
+      setdata(response.data);
+
+     
+    }
+    getdata();
+   },[])
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -14,25 +42,33 @@ const Profilescreen = ({ navigation }) => {
       </View>
       
       <View style={styles.profileContainer}>
-        <View style={styles.profileHeader}>
-          <Image
-            source={{ 
-              uri: "https://s3-alpha-sig.figma.com/img/44b3/9dae/f7b8d9642d79c4d7aa93f9b95ca7a006?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=VbWRgFdKRgubmu4OCPj40WLsnzqhAOym7l-qC34kfgGWTOpKb4wny2X8bI~P04jxYprVcVUbDUtxFFqkOz6JGiKhbCzWTb~RZLInR~ex0fZd~Y5vJ~~YuePtIBoROXfUgAuHVcF84l-JjLsUzNCP7-DBifgICfsoQxoZ~W906MyT-SIwQ0hsQvapnk0azm~xZenRIz5oCNHPYxdnayXZNt-32j9fFKnrcsWvcGLZqP9CLkndE03fA11urIdA1Yl0QCFl3m4a-RSA3jR1YIX5RDC9UdyKxx07M5d9Tg1HHkB5LUFRBRs2TCrKPQAJ2paoAUV1oFakggEY7~CeYt8qOw__",
-            }}
-            style={styles.profileImage}
-          />
-          <Text style={styles.profileName}>Travino</Text>
-        </View>
-        <View style={styles.top}></View>
-        <TextInput style={styles.input} placeholder="Full name" placeholderTextColor="#A0A0A0" />
-        <TextInput style={styles.input} placeholder="Agency name" placeholderTextColor="#A0A0A0" />
-        <TextInput style={styles.input} placeholder="Tour Guide name" placeholderTextColor="#A0A0A0" />
-        <View style={styles.phoneContainer}>
-  <Ionicons name="call" size={20} color="#000" style={styles.phoneIcon} />
-  <TextInput style={styles.inputphone} placeholder="+91 xxxxxxxxx" placeholderTextColor="#A0A0A0" />
+  <View style={styles.profileHeader}>
+    <Image
+      source={{ 
+        uri: "https://s3-alpha-sig.figma.com/img/44b3/9dae/f7b8d9642d79c4d7aa93f9b95ca7a006?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=VbWRgFdKRgubmu4OCPj40WLsnzqhAOym7l-qC34kfgGWTOpKb4wny2X8bI~P04jxYprVcVUbDUtxFFqkOz6JGiKhbCzWTb~RZLInR~ex0fZd~Y5vJ~~YuePtIBoROXfUgAuHVcF84l-JjLsUzNCP7-DBifgICfsoQxoZ~W906MyT-SIwQ0hsQvapnk0azm~xZenRIz5oCNHPYxdnayXZNt-32j9fFKnrcsWvcGLZqP9CLkndE03fA11urIdA1Yl0QCFl3m4a-RSA3jR1YIX5RDC9UdyKxx07M5d9Tg1HHkB5LUFRBRs2TCrKPQAJ2paoAUV1oFakggEY7~CeYt8qOw__",
+      }}
+      style={styles.profileImage}
+    />
+    <Text style={styles.profileName}>Travino</Text>
+  </View>
+  <View style={styles.top}></View>
+
+  <View style={styles.input}>
+    <Text style={styles.textStyle}>John Doe</Text>
+  </View>
+  <View style={styles.input}>
+    <Text style={styles.textStyle}>XYZ Agency</Text>
+  </View>
+  <View style={styles.input}>
+    <Text style={styles.textStyle}>Michael Smith</Text>
+  </View>
+
+  <View style={styles.phoneContainer}>
+    <Ionicons name="call" size={20} color="#000" style={styles.phoneIcon} />
+    <Text style={styles.textStyle}>+91 xxxxxxxxx</Text>
+  </View>
 </View>
-      
-      </View>
+
     </SafeAreaView>
   );
 };
@@ -118,7 +154,8 @@ marginTop:hp("2%")
     borderRadius: 10,
     paddingHorizontal: wp("2%"),
     color: "#000",
-  }
+  },
+  
 });
 
 export default Profilescreen;
