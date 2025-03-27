@@ -31,7 +31,42 @@ const HomeScreen = ({ navigation }) => {
   const [currentDate, setCurrentDate] = useState("");
   const [cityName, setCityName] = useState("Pune");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activities, setactivities] = useState([]);
+  const[locationid,setlocationid]=useState();
+    useEffect(() => {
+        const getactivities = async () => {
+          try {
+            const authToken = await AsyncStorage.getItem("authToken");
+            const locationId = await AsyncStorage.getItem("locationid");
+            setlocationid(locationId);
+            if (!authToken || !locationId) {
+              console.error("Auth token or Location ID missing");
+              return;
+            }
+      
+            const response = await axios.get(`${API_URL}/task`, {
+              params: { 
+                location_id: locationId,
+                id_deleted: false 
+              },
+            });
+            
+      
+            console.log("👼👼👼👼",JSON.stringify(response.data,null,2));
+            if (response.data && Array.isArray(response.data)) {
+              
+              setactivities(response.data);
 
+            } else {
+              console.error("Unexpected API response format", response.data.transformedTasks);
+            }
+          } catch (error) {
+            console.error("Error fetching shops:", error);
+          }
+        };
+      
+        getactivities();
+      }, []);
   const formatDate = () => {
     const options = {
       weekday: "long",

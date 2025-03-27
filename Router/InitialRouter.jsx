@@ -30,10 +30,11 @@ export const withFooter = (Component) => {
   );
 };
 
-const InitialRouter = () => {
+const InitialRouter = ({initialRoute}) => {
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false }}
+      initialRouteName={initialRoute} 
     >
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Home" component={withFooter(HomeScreen)} />

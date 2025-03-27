@@ -40,15 +40,15 @@ export default function App() {
     const checkAuth = async () => {
       try {
         const token = await AsyncStorage.getItem("authToken");
-
+  
         if (token) {
           const decodedToken = jwtDecode(token);
-          const currentTime = Date.now() / 1000;
-
+          const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
+  
           if (decodedToken.exp > currentTime) {
             setInitialRoute("Home");
           } else {
-            await AsyncStorage.removeItem("token");
+            await AsyncStorage.removeItem("authToken"); // Corrected key
             setInitialRoute("Login");
           }
         } else {
@@ -59,9 +59,10 @@ export default function App() {
         setInitialRoute("Login");
       }
     };
-
+  
     checkAuth();
   }, []);
+  
 
   if (initialRoute === null) {
     return (
@@ -82,7 +83,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <InitialRouter />
+      <InitialRouter initialRoute={initialRoute} />
       <StatusBar style="auto" />
     </NavigationContainer>
   );
