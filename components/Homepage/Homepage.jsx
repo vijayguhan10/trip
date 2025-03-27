@@ -54,7 +54,7 @@ const HomeScreen = ({ navigation }) => {
       
             console.log("👼👼👼👼",JSON.stringify(response.data,null,2));
             if (response.data && Array.isArray(response.data)) {
-              
+              console.log("😂😂😂😂")
               setactivities(response.data);
 
             } else {
