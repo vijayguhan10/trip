@@ -96,12 +96,12 @@ const menuItems = [
     type: "material",
     screen: "Food",
   },
-  {
-    label: "Places to Visit",
-    icon: "location-pin",
-    type: "entypo",
-    screen: "Places",
-  },
+  // {
+  //   label: "Places to Visit",
+  //   icon: "location-pin",
+  //   type: "entypo",
+  //   screen: "Places",
+  // },
   {
     label: "Shopping",
     icon: "shopping-bag",
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginVertical: hp("0.3%"),
-    paddingVertical: hp("1.6%"),
+    paddingVertical: hp("3%"),
     borderWidth: 1,
     borderColor: "#eee",
     borderRadius: wp("2%"),
@@ -191,6 +191,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     gap: wp("7%"),
+    paddingVertical:hp("1.5%")
   },
   supportcontainer: {
     flexDirection: "column",
