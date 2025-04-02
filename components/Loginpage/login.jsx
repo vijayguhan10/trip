@@ -16,35 +16,45 @@ import {
 import { API_URL } from "@env";
 import ToastManager, { Toast } from "toastify-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export default function LoginScreen({ navigation }) {
   const [bookingId, setBookingId] = useState("");
   const [lastName, setLastName] = useState("");
 
   const handleLogin = async () => {
-    console.log("hello", bookingId, lastName);
-    console.log(API_URL);
+    if (!bookingId || !lastName) {
+      Toast.error("Please enter both Booking ID and Last Name");
+      return;
+    }
+
+    console.log("Attempting login with:", bookingId, lastName);
+    console.log("API URL:", API_URL);
+
     try {
       const response = await axios.post(`${API_URL}/booking/verify`, {
-        booking_id:bookingId,
-        name:lastName,
+        booking_id: bookingId,
+        name: lastName,
       });
+
       console.log("Login successful:", response.data);
-      console.log("👼👼👼👼👼")
-      console.log("🚭🚭😍😍😍😍😍😍😍😍😍",response.data.booking.location_id)
-      const token = response.data.token;
-      await AsyncStorage.setItem("authToken", token);
-      // console.log("Destination_id", response.data.location_id);
+
+      await AsyncStorage.setItem("authToken", response.data.token);
       await AsyncStorage.setItem(
         "locationid",
         response.data.booking.location_id
       );
-      console.log("AsyncStorage", await AsyncStorage.getItem("locationid"));
+      await AsyncStorage.setItem("lastName", lastName);
+      await AsyncStorage.setItem("bookingId", bookingId);
+
+      console.log("Data saved to AsyncStorage");
       Toast.success("Login successful");
+
       setTimeout(() => {
         navigation.navigate("Home");
-      }, [3000]);
+      }, 3000);
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
+      Toast.error("Login failed. Please check your credentials.");
     }
   };
 
@@ -53,7 +63,6 @@ export default function LoginScreen({ navigation }) {
       colors={["#F5E5C0", "#DCE2F0", "#A3C7F4"]}
       style={styles.container}
     >
-      {" "}
       <ToastManager />
       <View style={styles.card}>
         <Image
@@ -97,7 +106,6 @@ export default function LoginScreen({ navigation }) {
     </LinearGradient>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
