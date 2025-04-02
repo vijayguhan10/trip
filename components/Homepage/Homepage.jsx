@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -12,6 +11,9 @@ import {
 } from "react-native";
 import axios from "axios";
 import { Icon } from "react-native-elements";
+import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome } from '@expo/vector-icons';
+import {jwtDecode} from "jwt-decode";
 import { API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
@@ -20,7 +22,12 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import Sidebar from "../SideBar";
+import { useNavigation } from "@react-navigation/native";
+import LottieView from "lottie-react-native";
+import loadingAnimation from "../Animation - 1743617296128.json";
+
 const WEATHER_API_KEY = "4b9b8688eca407ea3546cf525c8f03cb";
+
 const HomeScreen = ({ navigation }) => {
   const [topDestinations, setTopDestinations] = useState([]);
   const [topActivities, setTopActivities] = useState([]);
@@ -32,41 +39,68 @@ const HomeScreen = ({ navigation }) => {
   const [cityName, setCityName] = useState("Pune");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activities, setactivities] = useState([]);
-  const[locationid,setlocationid]=useState();
-    useEffect(() => {
-        const getactivities = async () => {
-          try {
-            const authToken = await AsyncStorage.getItem("authToken");
-            const locationId = await AsyncStorage.getItem("locationid");
-            setlocationid(locationId);
-            if (!authToken || !locationId) {
-              console.error("Auth token or Location ID missing");
-              return;
-            }
-      
-            const response = await axios.get(`${API_URL}/task`, {
-              params: { 
-                location_id: locationId,
-                id_deleted: false 
-              },
-            });
-            
-      
-            console.log("👼👼👼👼",JSON.stringify(response.data,null,2));
-            if (response.data && Array.isArray(response.data)) {
-              console.log("😂😂😂😂")
-              setactivities(response.data);
+  const [locationid, setlocationid] = useState();
+  const [agentLogo, setAgentLogo] = useState("");
+  const [loading, setLoading] = useState(true);
 
-            } else {
-              console.error("Unexpected API response format", response.data.transformedTasks);
-            }
-          } catch (error) {
-            console.error("Error fetching shops:", error);
-          }
-        };
+  useEffect(() => {
+    const init = async () => {
+      try {
+        setLoading(true);
+        setCurrentDate(formatDate());
+        
+        // Execute all async operations in parallel
+        await Promise.all([
+          getactivities(),
+          fetchInitialWeather(),
+          GetPlaces()
+        ]);
+      } catch (error) {
+        console.error("Initialization error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    init();
+  }, []);
+
+  const fetchInitialWeather = async () => {
+    const city = await getCurrentLocation();
+    await fetchWeatherData(city);
+  };
+
+  const getactivities = async () => {
+    try {
+      const authToken = await AsyncStorage.getItem("authToken");
+      const decodedToken = jwtDecode(authToken);
+      setAgentLogo(decodedToken.agent_logo);
+      const locationId = await AsyncStorage.getItem("locationid");
+      setlocationid(locationId);
       
-        getactivities();
-      }, []);
+      if (!authToken || !locationId) {
+        console.error("Auth token or Location ID missing");
+        return;
+      }
+
+      const response = await axios.get(`${API_URL}/task`, {
+        params: { 
+          location_id: locationId,
+          id_deleted: false 
+        },
+      });
+      
+      if (response.data && Array.isArray(response.data)) {
+        setactivities(response.data);
+        setTopActivities(response.data);
+      } else {
+        console.error("Unexpected API response format", response.data.transformedTasks);
+      }
+    } catch (error) {
+      console.error("Error fetching shops:", error);
+    }
+  };
+
   const formatDate = () => {
     const options = {
       weekday: "long",
@@ -181,19 +215,10 @@ const HomeScreen = ({ navigation }) => {
       const destinations = places.filter((place) => !place.top_activities);
       const activities = places.filter((place) => place.top_activities);
       setTopDestinations(destinations);
-      setTopActivities(activities);
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error fetching places:", error);
+    }
   };
-
-  useEffect(() => {
-    const init = async () => {
-      setCurrentDate(formatDate());
-      const city = await getCurrentLocation();
-      await fetchWeatherData(city);
-      await GetPlaces();
-    };
-    init();
-  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -209,6 +234,7 @@ const HomeScreen = ({ navigation }) => {
     if (loadingWeather || !weatherData) {
       return <View style={styles.WetherReportContainer}></View>;
     }
+
 
     return (
       <View style={styles.WetherReportContainer}>
@@ -227,6 +253,18 @@ const HomeScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={closeSidebar}>
       <View style={{ flex: 1 }}>
+      {loading ? (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <LottieView
+        source={loadingAnimation}
+        autoPlay
+        loop
+        style={{ width: 200, height: 200 }}
+      />
+    </View>
+
+      ) : (
+        
         <View style={styles.container}>
           <View style={styles.header}>
             <TouchableOpacity onPress={toggleSidebar} style={{ padding: 10 }}>
@@ -236,14 +274,20 @@ const HomeScreen = ({ navigation }) => {
                 color="#000"
               />
             </TouchableOpacity>
-
             <Image
               source={{
-                uri: "https://s3-alpha-sig.figma.com/img/44b3/9dae/f7b8d9642d79c4d7aa93f9b95ca7a006?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=VbWRgFdKRgubmu4OCPj40WLsnzqhAOym7l-qC34kfgGWTOpKb4wny2X8bI~P04jxYprVcVUbDUtxFFqkOz6JGiKhbCzWTb~RZLInR~ex0fZd~Y5vJ~~YuePtIBoROXfUgAuHVcF84l-JjLsUzNCP7-DBifgICfsoQxoZ~W906MyT-SIwQ0hsQvapnk0azm~xZenRIz5oCNHPYxdnayXZNt-32j9fFKnrcsWvcGLZqP9CLkndE03fA11urIdA1Yl0QCFl3m4a-RSA3jR1YIX5RDC9UdyKxx07M5d9Tg1HHkB5LUFRBRs2TCrKPQAJ2paoAUV1oFakggEY7~CeYt8qOw__",
+                uri: agentLogo,
               }}
               style={styles.profileImage}
             />
-            <Icon name="search" size={28} color="#000" style={styles.search} />
+            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+              <FontAwesome
+                name="user"
+                size={28}
+                color="#000"
+                style={styles.search}
+              />
+            </TouchableOpacity>{" "}
           </View>
 
           <Text style={styles.welcomeText}>Welcome!</Text>
@@ -257,13 +301,14 @@ const HomeScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.categoriesContainer}>
-              <CategoryItem title="Restaurants" />
-              <CategoryItem title="Activities" />
-              <CategoryItem title="Shopping" />
+            <CategoryItem title="Restaurants" screen="Food" image={require("../../assets/restaurant.jpg")}/>
+<CategoryItem title="Activities" screen="Activities" image={require("../../assets/activity.jpg")}/>
+<CategoryItem title="Shopping" screen="Shopping" image={require("../../assets/shopping.jpg")}/>
+
             </View>
 
             <Text style={styles.sectionTitle}>Top Destinations</Text>
-            <View style={{marginLeft:wp('5%')}}>
+            <View style={{ marginLeft: wp("5%") }}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {topDestinations.map((item) => (
                   <TouchableOpacity
@@ -286,41 +331,93 @@ const HomeScreen = ({ navigation }) => {
               <FlatList
                 data={topActivities}
                 keyExtractor={(item) => item._id}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.listContainer}
                 renderItem={({ item }) => (
                   <TouchableOpacity
+                    style={styles.card}
                     onPress={() =>
-                      navigation.navigate("Indetail", { destination: item })
+                      navigation.navigate("DetailedScreen", {
+                        activity: item,
+                        locationid,
+                      })
                     }
                   >
                     <Image
-                      style={styles.ActivityImage}
-                      source={{ uri: item.image_urls[0] }}
+                      style={styles.activityImage}
+                      source={{ uri: item.image_url[0] }}
                     />
+
+                    {/* Details Section */}
+                    <View style={styles.infoContainer}>
+                      <Text style={styles.activityName}>{item.name}</Text>
+
+                      {/* Business Name & Location */}
+                      <View style={styles.row}>
+                        <Ionicons
+                          name="business-outline"
+                          size={18}
+                          color="#555"
+                        />
+                        <Text style={styles.businessName}>
+                          {item.business_name}
+                        </Text>
+                      </View>
+
+                      <View style={styles.row}>
+                        <Ionicons
+                          name="location-outline"
+                          size={18}
+                          color="#E63946"
+                        />
+                        <Text style={styles.city}>{item.city}</Text>
+                      </View>
+
+                      {/* Price & Rating */}
+                      <View style={styles.row}>
+                        <Ionicons
+                          name="pricetag-outline"
+                          size={18}
+                          color="#28A745"
+                        />
+                        <Text style={styles.price}>₹{item.price}</Text>
+                      </View>
+
+                      <View style={styles.row}>
+                        <Ionicons name="star" size={18} color="#FFD700" />
+                        <Text style={styles.rating}>
+                          {item.customer_rating} ★
+                        </Text>
+                      </View>
+                    </View>
                   </TouchableOpacity>
                 )}
               />
             </View>
           </ScrollView>
         </View>
-
+ )}
         {isSidebarOpen && <Sidebar isSidebarOpen={isSidebarOpen} />}
       </View>
     </TouchableWithoutFeedback>
   );
 };
 
-const CategoryItem = ({ title }) => (
-  <TouchableOpacity style={styles.categoryItem}>
+const CategoryItem = ({ title,screen,image }) => {
+  const navigation=useNavigation()
+  return(
+<TouchableOpacity style={styles.categoryItem} onPress={()=>navigation.navigate(screen)}>
     <Image
-      source={{
-        uri: "https://s3-alpha-sig.figma.com/img/185c/3420/3e95a903e1dde7cea8c778376c9a3708?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=hHmN0jPQyC1APrQ4wxzyFkFQQ3-cY28w9xF5sJIkcqFMMomxJdbgsIOqvcnRk52ZaEGtTOUW41IvFENbdv~PuruxSp~MvFHRlOsUY0xaDRG4g1AdkfRBdYCGjzSI0T9P3I3kzeGVjqGgevUz0jCRoYMgfbO82oQwIdqjcye0XOJ2LPUzJmUK7RH2~CfNZML9PNpqzGdQJlOQVusv7SUnm24rCZZsrTJnNm0B7icy8PCqT1VBNEeCCISbfn82g89Y6WmcBw3zbRUm8~qLPqb8lYuqy65hG4UXrfrlB0miu-c1vSVTehUSQXrV99anFhXpV~iazcZjDft3kEWccjp32Q__",
-      }}
+      source={image}
       style={styles.categoryImage}
     />
     <Text style={styles.categorytitle}>{title}</Text>
   </TouchableOpacity>
-);
+  )
+  
 
+
+}
 const DestinationItem = ({ title, imageUri }) => {
   return (
     <View style={styles.destinationItem}>
@@ -446,6 +543,66 @@ const styles = StyleSheet.create({
   },
   categorytitle: {
     fontFamily: "LufgaItalic",
+  },
+  listContainer: {
+    paddingVertical: hp("2%"),
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: wp("4%"),
+    marginVertical: hp("1%"),
+    paddingBottom: hp("2%"),
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4, // Android shadow
+    marginHorizontal: wp("3%"),
+  },
+  activityImage: {
+    width: "100%",
+    height: hp("30%"),
+    borderTopLeftRadius: wp("4%"),
+    borderTopRightRadius: wp("4%"),
+    resizeMode: "cover",
+  },
+  infoContainer: {
+    paddingHorizontal: wp("4%"),
+    paddingTop: hp("2%"),
+  },
+  activityName: {
+    fontSize: hp("2.5%"),
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: hp("0.5%"),
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: hp("0.5%"),
+  },
+  businessName: {
+    fontSize: hp("2%"),
+    color: "#666",
+    marginLeft: wp("2%"),
+  },
+  city: {
+    fontSize: hp("2%"),
+    color: "#E63946",
+    fontWeight: "600",
+    marginLeft: wp("2%"),
+  },
+  price: {
+    fontSize: hp("2.2%"),
+    fontWeight: "bold",
+    color: "#28A745",
+    marginLeft: wp("2%"),
+  },
+  rating: {
+    fontSize: hp("2%"),
+    fontWeight: "600",
+    color: "#FFD700",
+    marginLeft: wp("2%"),
   },
 });
 

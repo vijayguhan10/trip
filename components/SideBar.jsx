@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect,useState} from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { Icon } from "react-native-elements";
 import {
@@ -6,15 +6,27 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {jwtDecode} from "jwt-decode"; // Import jwt-decode
 
 const Sidebar = ({ isSidebarOpen }) => {
   const navigation = useNavigation();
+  const [agentLogo, setAgentLogo] = useState("");
+    useEffect(() => {
+      const getlogo=async()=>{
+        const authToken = await AsyncStorage.getItem("authToken");
+        const decodedToken = jwtDecode(authToken);
+               setAgentLogo(decodedToken.agent_logo);
+  
+      }
+      getlogo();
+    },[])
   return (
     <View style={[styles.container, { width: isSidebarOpen ? wp("80%") : 0 }]}>
       <View style={styles.header}>
         <Image
           source={{
-            uri: "https://s3-alpha-sig.figma.com/img/44b3/9dae/f7b8d9642d79c4d7aa93f9b95ca7a006?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=VbWRgFdKRgubmu4OCPj40WLsnzqhAOym7l-qC34kfgGWTOpKb4wny2X8bI~P04jxYprVcVUbDUtxFFqkOz6JGiKhbCzWTb~RZLInR~ex0fZd~Y5vJ~~YuePtIBoROXfUgAuHVcF84l-JjLsUzNCP7-DBifgICfsoQxoZ~W906MyT-SIwQ0hsQvapnk0azm~xZenRIz5oCNHPYxdnayXZNt-32j9fFKnrcsWvcGLZqP9CLkndE03fA11urIdA1Yl0QCFl3m4a-RSA3jR1YIX5RDC9UdyKxx07M5d9Tg1HHkB5LUFRBRs2TCrKPQAJ2paoAUV1oFakggEY7~CeYt8qOw__",
+            uri:agentLogo,
           }}
           style={styles.profileImage}
         />
@@ -102,12 +114,12 @@ const menuItems = [
     type: "material-community",
     screen: "Things",
   },
-  {
-    label: "My Bookings",
-    icon: "calendar",
-    type: "feather",
-    screen: "Mybookings",
-  },
+  // {
+  //   label: "My Bookings",
+  //   icon: "calendar",
+  //   type: "feather",
+  //   screen: "Mybookings",
+  // },
   { label: "My Profile", icon: "user", type: "feather", screen: "Profile" },
 ];
 const styles = StyleSheet.create({

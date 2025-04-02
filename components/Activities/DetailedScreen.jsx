@@ -27,7 +27,7 @@ import { API_URL } from "@env";
 const DetailedScreen = () => {
   const navigation = useNavigation();
     const route = useRoute();
-      const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
       const [reviewTitle, setReviewTitle] = useState("");
       const [reviewText, setReviewText] = useState("");
      

@@ -1,13 +1,14 @@
-import { View, Text, ScrollView, Image, StyleSheet,TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-
 import { API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import LottieView from "lottie-react-native";
+import loadingAnimation from "../Animation - 1743617296128.json";
 
-function ActivityCard({ activity,navigation,locationid }) {
+function ActivityCard({ activity, navigation, locationid }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const handleScroll = (event) => {
@@ -29,17 +30,17 @@ function ActivityCard({ activity,navigation,locationid }) {
           scrollEventThrottle={16}
         >
           {activity.image_url.map((image, index) => (
-             <TouchableOpacity
-             key={index}
-             onPress={() => navigation.navigate('DetailedScreen', { activity,locationid })}
-           >
-            <Image
+            <TouchableOpacity
               key={index}
-              source={{ uri: image }}
-              style={styles.image}
-              resizeMode="cover"
-            />
-              </TouchableOpacity>
+              onPress={() => navigation.navigate('DetailedScreen', { activity, locationid })}
+            >
+              <Image
+                key={index}
+                source={{ uri: image }}
+                style={styles.image}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
           ))}
         </ScrollView>
         <View style={styles.imageIndicators}>
@@ -68,43 +69,59 @@ function ActivityCard({ activity,navigation,locationid }) {
   );
 }
 
-export default function Overview({navigation}) {
-  const [activities, setactivities] = useState([]);
-  const[locationid,setlocationid]=useState();
-    useEffect(() => {
-        const getactivities = async () => {
-          try {
-            const authToken = await AsyncStorage.getItem("authToken");
-            const locationId = await AsyncStorage.getItem("locationid");
-            setlocationid(locationId);
-            if (!authToken || !locationId) {
-              console.error("Auth token or Location ID missing");
-              return;
-            }
-      
-            const response = await axios.get(`${API_URL}/task`, {
-              params: { 
-                location_id: locationId,
-                id_deleted: false 
-              },
-            });
-            
-      
-            console.log("👼👼👼👼",JSON.stringify(response.data,null,2));
-            if (response.data && Array.isArray(response.data)) {
-              
-              setactivities(response.data);
+export default function Overview({ navigation }) {
+  const [activities, setActivities] = useState([]);
+  const [locationid, setLocationid] = useState();
+  const [loading, setLoading] = useState(true);
 
-            } else {
-              console.error("Unexpected API response format", response.data.transformedTasks);
-            }
-          } catch (error) {
-            console.error("Error fetching shops:", error);
-          }
-        };
-      
-        getactivities();
-      }, []);
+  useEffect(() => {
+    const getactivities = async () => {
+      try {
+        setLoading(true);
+        const authToken = await AsyncStorage.getItem("authToken");
+        const locationId = await AsyncStorage.getItem("locationid");
+        setLocationid(locationId);
+        
+        if (!authToken || !locationId) {
+          console.error("Auth token or Location ID missing");
+          return;
+        }
+  
+        const response = await axios.get(`${API_URL}/task`, {
+          params: { 
+            location_id: locationId,
+            id_deleted: false 
+          },
+        });
+        
+        if (response.data && Array.isArray(response.data)) {
+          setActivities(response.data);
+        } else {
+          console.error("Unexpected API response format", response.data?.transformedTasks);
+        }
+      } catch (error) {
+        console.error("Error fetching activities:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    getactivities();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <LottieView
+          source={loadingAnimation}
+          autoPlay
+          loop
+          style={styles.loadingAnimation}
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -118,20 +135,27 @@ export default function Overview({navigation}) {
       <ScrollView 
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom:hp("10%")}}
+        contentContainerStyle={{ paddingBottom: hp("10%") }}
       >
-      {activities && activities.length > 0 ? (
-  activities.map((activity) => (
-    <ActivityCard key={activity._id} activity={activity} navigation={navigation} locationid={locationid}/>
-  ))
-) : (
-  <Text>Loading...</Text>
-)}
-
+        {activities && activities.length > 0 ? (
+          activities.map((activity) => (
+            <ActivityCard 
+              key={activity._id} 
+              activity={activity} 
+              navigation={navigation} 
+              locationid={locationid}
+            />
+          ))
+        ) : (
+          <View style={styles.noActivitiesContainer}>
+            <Text style={styles.noActivitiesText}>No activities available</Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -245,5 +269,16 @@ const styles = StyleSheet.create({
   price: {
     color: '#666',
     fontSize: wp('3.5%')
-  }
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  loadingAnimation: {
+    width: 200,
+    height: 200,
+  },
+
 });

@@ -23,8 +23,10 @@ const Header = ({ vegMode, setVegMode }) => {
           containerStyle={styles.searchBarContainer}
           inputContainerStyle={styles.searchBarInput}
         />
-<Text style={styles.vegtext}>{vegMode ? "Veg\nMode" : "Non-Veg\nMode"}</Text>
-<Switch
+        <Text style={styles.vegtext}>
+          {vegMode ? "Veg\nMode" : "Non-Veg\nMode"}
+        </Text>
+        <Switch
           trackColor={{ false: "#767577", true: "#81b0ff" }}
           thumbColor={vegMode ? "#f4f3f4" : "#f4f3f4"}
           ios_backgroundColor="#3e3e3e"
