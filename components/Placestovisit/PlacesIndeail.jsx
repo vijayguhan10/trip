@@ -15,6 +15,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import WebView from "react-native-webview";
 const PlacesIndetail = () => {
   const route = useRoute();
   const destination = route.params?.destination || {};
@@ -104,7 +105,7 @@ const PlacesIndetail = () => {
 <View style={styles.mapContainer}>
 <TouchableOpacity onPress={() => Linking.openURL(destination.map_link)}>
 
-  {/* <WebView
+  <WebView
     source={{
       html: `
         <html>
@@ -122,7 +123,7 @@ const PlacesIndetail = () => {
       `,
     }}
     style={styles.mapimage}
-  /> */}
+  />
     </TouchableOpacity>
 
 </View>

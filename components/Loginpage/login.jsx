@@ -67,9 +67,7 @@ export default function LoginScreen({ navigation }) {
       <View style={styles.card}>
         <Image
           style={{ width: hp("30%"), height: hp("20%") }}
-          source={{
-            uri: "https://s3-alpha-sig.figma.com/img/02c3/4fd3/b73ef0a13ece73c6ebac7abdfd912bd1?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=CXaEkDLOiAuPPT4qooIZwshz-8yltiGaw6pFuS74qEjYU6PGTjKsDKdJsJ6qnHOdE0T31aSmc2ONCNLiqS~2pY4BpqmEMQbBwM5EsOy~Mgso-l2UQLm2JSOCtpwS1L2MHxUSDXL5Ajw98Ds2AwkMyeObtj16-n8fLh~U0oRQ205lugO0lHpMqYMxnI6M6eK3ylvpnhqBbmtR0pbg8atIWOs2H9S9l7DYrPeteqAjgB0d3KMbVv62X7~8JX6FiYYpMTK5bwUtJ9GFzboxoQ69eQsoXcAGG4wxwekgXuUkp7w5u4VRPlKITQNazK3jVyieNas0Gh-7LoSmDaAcjTCvDg__",
-          }}
+          source={require("../../assets/icon.png")}
         />
 
         <Text style={styles.title}>Welcome Back!</Text>

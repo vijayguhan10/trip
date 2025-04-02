@@ -12,12 +12,16 @@ import {jwtDecode} from "jwt-decode"; // Import jwt-decode
 const Sidebar = ({ isSidebarOpen }) => {
   const navigation = useNavigation();
   const [agentLogo, setAgentLogo] = useState("");
+  const[name,setName]=useState();
+const[email,setemail]=useState(" ");
     useEffect(() => {
       const getlogo=async()=>{
         const authToken = await AsyncStorage.getItem("authToken");
         const decodedToken = jwtDecode(authToken);
                setAgentLogo(decodedToken.agent_logo);
-  
+               const name=await AsyncStorage.getItem("lastName");
+               setemail(decodedToken.email);
+               setName(name);
       }
       getlogo();
     },[])
@@ -31,8 +35,8 @@ const Sidebar = ({ isSidebarOpen }) => {
           style={styles.profileImage}
         />
         <View>
-          <Text style={styles.userName}>Hii Dinu</Text>
-          <Text style={styles.userEmail}>dinu@gmail.com</Text>
+          <Text style={styles.userName}>{name}</Text>
+        <Text style={styles.userEmail}>{email}</Text>
         </View>
       </View>
       <View style={styles.menuContainer}>

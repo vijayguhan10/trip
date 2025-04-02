@@ -52,7 +52,7 @@ const[name,setName]=useState();
         const decodedToken = jwtDecode(token);
         const locationId = decodedToken.location_id;
         setAgentLogo(decodedToken.agent_logo);
-        const name=AsyncStorage.getItem("lastName");
+        const name=await AsyncStorage.getItem("lastName");
         setName(name);
         if (!locationId) throw new Error("Location ID not found in token");
 
@@ -107,10 +107,8 @@ const[name,setName]=useState();
           >
             <Icon name="chevron-left" type="feather" size={24} color="#000" />
           </TouchableOpacity>
-          <Image
-            source={agentLogo}
-            style={styles.profileImage}
-          />
+          <Image source={{ uri: agentLogo }} style={styles.profileImage} />
+
           <View>
             <Text style={styles.headerText}>{name}</Text>
             <Text style={styles.headerSubText}>Good morning</Text>
