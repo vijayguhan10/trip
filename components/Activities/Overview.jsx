@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity,TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { API_URL } from "@env";
@@ -73,6 +73,7 @@ export default function Overview({ navigation }) {
   const [activities, setActivities] = useState([]);
   const [locationid, setLocationid] = useState();
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const getactivities = async () => {
@@ -108,7 +109,10 @@ export default function Overview({ navigation }) {
   
     getactivities();
   }, []);
-
+  const filteredActivities = activities.filter(activity =>
+    activity.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -125,10 +129,17 @@ export default function Overview({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.searchBar}>
-          <Ionicons name="search-outline" size={wp('5%')} color="#666" />
-          <Text style={styles.searchText}>Search</Text>
-        </View>
+      <View style={styles.searchBar}>
+  <Ionicons name="search-outline" size={wp('5%')} color="#666" />
+  <TextInput
+    style={styles.searchInput}
+    placeholder="Search by name"
+    placeholderTextColor="#999"
+    value={searchQuery}
+    onChangeText={setSearchQuery}
+  />
+</View>
+
         <Text style={styles.headerTitle}>Must Try Activities</Text>
       </View>
       
@@ -137,8 +148,8 @@ export default function Overview({ navigation }) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: hp("10%") }}
       >
-        {activities && activities.length > 0 ? (
-          activities.map((activity) => (
+     {filteredActivities && filteredActivities.length > 0 ? (
+  filteredActivities.map((activity) => (
             <ActivityCard 
               key={activity._id} 
               activity={activity} 
@@ -280,5 +291,11 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
   },
-
+  searchInput: {
+    flex: 1,
+    marginLeft: wp('2.5%'),
+    fontSize: wp('3.5%'),
+    color: '#000'
+  },
+  
 });

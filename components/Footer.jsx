@@ -36,7 +36,7 @@ const menuItems = [
   { name: "home", type: "material", screen: "Home" },
   { name: "restaurant", type: "material", screen: "Food" },
   { name: "money", type: "material", screen: "Activities"},
-  { name: "currency-rupee", type: "material", screen: "j" },
+  { name: "shopping-cart", type: "material", screen: "Shopping" },
 ];
 
 const { width } = Dimensions.get("window");
