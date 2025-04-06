@@ -42,7 +42,42 @@ const HomeScreen = ({ navigation }) => {
   const [locationid, setlocationid] = useState();
   const [agentLogo, setAgentLogo] = useState("");
   const [loading, setLoading] = useState(true);
+  const [Restaurants, SetRestaurunts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
+  const GetFood = async (category = null) => {
+    try {
+      setLoading(true);
+      console.log("api url data : ", API_URL);
+      const authToken = await AsyncStorage.getItem("authToken");
+
+      const destinationId = await AsyncStorage.getItem("locationid");
+      if (!destinationId) throw new Error("Destination ID not found");
+
+      const response = await axios.get(
+        `${API_URL}/restaurant?location_id=${destinationId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      let filteredRestaurants = response.data;
+     
+  console.log(filteredRestaurants)
+      SetRestaurunts(filteredRestaurants);
+    } catch (error) {
+      console.error("Error fetching places:", error.message || error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    GetFood();
+  }, []);
   useEffect(() => {
     const init = async () => {
       try {
@@ -321,24 +356,24 @@ const HomeScreen = ({ navigation }) => {
                 />
               </View>
 
-              <Text style={styles.sectionTitle}>Top Destinations</Text>
-              <View style={{ marginLeft: wp("5%") }}>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {topDestinations.map((item) => (
-                    <TouchableOpacity
-                      key={item._id}
-                      onPress={() =>
-                        navigation.navigate("Indetail", { destination: item })
-                      }
-                    >
-                      <DestinationItem
-                        title={item.place_name}
-                        imageUri={item.image_urls[0]}
-                      />
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              </View>
+            <Text style={styles.sectionTitle}>Top Destinations</Text>
+            <View style={{ marginLeft: wp("5%") }}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {topDestinations.map((item) => (
+                  <TouchableOpacity
+                    key={item._id}
+                    onPress={() =>
+                      navigation.navigate("Indetail", { destination: item,Restaurants,Alldestination:topDestinations })
+                    }
+                  >
+                    <DestinationItem
+                      title={item.place_name}
+                      imageUri={item.image_urls[0]}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
 
               <View>
                 <Text style={styles.Activitytext}>Top Activities</Text>
