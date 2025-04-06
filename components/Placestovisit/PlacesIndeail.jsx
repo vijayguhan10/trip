@@ -7,7 +7,7 @@ import {
   FlatList,
   ScrollView,
   TouchableOpacity,
-  Linking 
+  Linking,
 } from "react-native";
 
 import { useRoute } from "@react-navigation/native";
@@ -16,25 +16,41 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import WebView from "react-native-webview";
+import { useNavigation } from "@react-navigation/native";
 const PlacesIndetail = () => {
+  const navaigate = useNavigation();
   const route = useRoute();
   const destination = route.params?.destination || {};
+  const Alldestination = route.params?.Alldestination || {};
+  const Restaurant = route.params?.Restaurants;
   console.log("Destination  data reached:", destination);
   const reviews = [
     { id: "1", text: "Great place to relax!" },
     { id: "2", text: "Loved the beaches!" },
   ];
   const RestauruntsScroll = ({ title, imageUri }) => (
-    <View style={styles.destinationItem}>
+    <TouchableOpacity
+      style={styles.destinationItem}
+      onPress={() => navaigate.navigate("Food")}
+    >
       <Image source={{ uri: imageUri }} style={styles.destinationImage} />
       <Text style={styles.destinationText}>{title}</Text>
-    </View>
+    </TouchableOpacity>
   );
-  const NearbyPlaces = ({ title, imageUri }) => (
-    <View style={styles.destinationItem}>
+  const NearbyPlaces = ({ title, imageUri, item }) => (
+    <TouchableOpacity
+      style={styles.destinationItem}
+      onPress={() =>
+        navaigate.replace("Indetail", {
+          destination: item,
+          Restaurants: Restaurant,
+          Alldestination: Alldestination,
+        })
+      }
+    >
       <Image source={{ uri: imageUri }} style={styles.NearbyPlacesImage} />
       <Text style={styles.NearbyText}>{title}</Text>
-    </View>
+    </TouchableOpacity>
   );
   const restaurants = [
     {
@@ -101,13 +117,13 @@ const PlacesIndetail = () => {
             <Text style={styles.description}>{destination.short_summary}</Text>
           </View>
 
-
-<View style={styles.mapContainer}>
-<TouchableOpacity onPress={() => Linking.openURL(destination.map_link)}>
-
-  <WebView
-    source={{
-      html: `
+          <View style={styles.mapContainer}>
+            <TouchableOpacity
+              onPress={() => Linking.openURL(destination.map_link)}
+            >
+              <WebView
+                source={{
+                  html: `
         <html>
           <body style="margin:0;padding:0;">
             <iframe 
@@ -121,12 +137,11 @@ const PlacesIndetail = () => {
           </body>
         </html>
       `,
-    }}
-    style={styles.mapimage}
-  />
-    </TouchableOpacity>
-
-</View>
+                }}
+                style={styles.mapimage}
+              />
+            </TouchableOpacity>
+          </View>
 
           <Text style={styles.title}>Recommended Restaurants</Text>
           <ScrollView
@@ -134,11 +149,11 @@ const PlacesIndetail = () => {
             showsHorizontalScrollIndicator={true}
             style={styles.scrollContainer}
           >
-            {restaurants.map((items) => (
+            {Restaurant.map((items) => (
               <RestauruntsScroll
-                key={items.id}
+                key={items._id}
                 title={items.name}
-                imageUri={items.imgurl}
+                imageUri={items.image_url[0]}
               />
             ))}
           </ScrollView>
@@ -150,11 +165,12 @@ const PlacesIndetail = () => {
             style={styles.scrollContainer}
             contentContainerStyle={{ paddingBottom: hp("10%") }}
           >
-            {NearbyPlacesjson.map((items) => (
+            {Alldestination.map((items) => (
               <NearbyPlaces
                 key={items.id}
                 title={items.name}
-                imageUri={items.imgurl}
+                imageUri={items.image_urls[0]}
+                item={items}
               />
             ))}
           </ScrollView>
