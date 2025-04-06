@@ -16,24 +16,24 @@ const Header = ({ vegMode, setVegMode }) => {
 
   return (
     <View>
-      <View style={styles.header}>
-        <SearchBar
-          placeholder="Search"
-          onChangeText={(search) => console.log(search)}
-          containerStyle={styles.searchBarContainer}
-          inputContainerStyle={styles.searchBarInput}
-        />
-        <Text style={styles.vegtext}>
-          {vegMode ? "Veg\nMode" : "Non-Veg\nMode"}
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={vegMode ? "#f4f3f4" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleVegMode} // Update state when toggled
-          value={vegMode} // Use state for value
-        />
-      </View>
+   <View style={styles.header}>
+  {/* <View style={styles.quoteContainer}>
+    <Text style={styles.quoteText}>“Where every flavor tells a story.”</Text>
+  </View> */}
+  <View style={styles.modeContainer}>
+    <Text style={styles.vegtext}>
+      {vegMode ? "Veg Mode" : "Non-Veg Mode"}
+    </Text>
+    <Switch
+      trackColor={{ false: "#767577", true: "#81b0ff" }}
+      thumbColor={vegMode ? "#f4f3f4" : "#f4f3f4"}
+      ios_backgroundColor="#3e3e3e"
+      onValueChange={toggleVegMode}
+      value={vegMode}
+    />
+  </View>
+</View>
+
       <View style={styles.Topbarcontainer}>
         <Text style={styles.Popularity}>#popular</Text>
         <Text style={styles.Popularity}>#Nearby</Text>
@@ -48,14 +48,7 @@ const Header = ({ vegMode, setVegMode }) => {
 };
 
 const styles = StyleSheet.create({
-  header: {
-    marginTop: hp("5%"),
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: wp("2.5%"),
-    backgroundColor: "rgb(255, 255, 255)",
-  },
+  
   searchBarContainer: {
     width: wp("70%"),
     backgroundColor: "transparent",
@@ -90,15 +83,47 @@ const styles = StyleSheet.create({
     color: "white",
     padding: wp("2.5%"),
     borderRadius: wp("2%"),
-    marginLeft: wp("11%"),
+    marginLeft: wp("9%"),
+    marginBottom:hp("1%")
+    
   },
   LocationButton: {
     color: "white",
     fontFamily: "LufgaRegular",
+   
   },
   vegtext: {
     fontFamily: "LufgaSemiBoldItalic",
   },
+  header: {
+    marginTop: hp("5%"),
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: wp("4%"),
+    backgroundColor: "#FFFFFF",
+  },
+  
+  quoteContainer: {
+    flex: 1,
+    paddingRight: wp("3%"),
+  },
+  
+  quoteText: {
+    fontSize: wp("4.5%"),
+    fontStyle: "italic",
+    fontFamily: "LufgaSemiBoldItalic",
+    color: "#555",
+    textAlign: "left",
+  },
+  
+  modeContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection:'row',
+    marginLeft:"auto"
+  },
+  
 });
 
 export default Header;
