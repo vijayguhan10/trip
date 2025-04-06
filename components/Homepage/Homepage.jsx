@@ -3,18 +3,19 @@ import {
   View,
   Text,
   Image,
-  TouchableWithoutFeedback,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   ScrollView,
   StyleSheet,
   FlatList,
 } from "react-native";
 import axios from "axios";
+import { FontAwesome } from "@expo/vector-icons";
 import { Icon } from "react-native-elements";
+import { jwtDecode } from "jwt-decode";
 import { Ionicons } from "@expo/vector-icons";
-import { FontAwesome } from '@expo/vector-icons';
-import {jwtDecode} from "jwt-decode";
 import { API_URL } from "@env";
+import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import {
@@ -22,9 +23,8 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import Sidebar from "../SideBar";
-import { useNavigation } from "@react-navigation/native";
-import LottieView from "lottie-react-native";
 import loadingAnimation from "../Animation - 1743617296128.json";
+import LottieView from "lottie-react-native";
 
 const WEATHER_API_KEY = "4b9b8688eca407ea3546cf525c8f03cb";
 
@@ -48,12 +48,11 @@ const HomeScreen = ({ navigation }) => {
       try {
         setLoading(true);
         setCurrentDate(formatDate());
-        
-        // Execute all async operations in parallel
+
         await Promise.all([
           getactivities(),
           fetchInitialWeather(),
-          GetPlaces()
+          GetPlaces(),
         ]);
       } catch (error) {
         console.error("Initialization error:", error);
@@ -66,8 +65,45 @@ const HomeScreen = ({ navigation }) => {
   }, []);
 
   const fetchInitialWeather = async () => {
-    const city = await getCurrentLocation();
-    await fetchWeatherData(city);
+    try {
+      const cachedWeather = await AsyncStorage.getItem("weatherData");
+      if (cachedWeather) {
+        setWeatherData(JSON.parse(cachedWeather));
+        setLoadingWeather(false);
+      }
+
+      // Then fetch fresh weather data
+      const city = await getCurrentLocation();
+      await fetchWeatherData(city);
+    } catch (error) {
+      console.error("Error fetching initial weather:", error);
+    }
+  };
+
+  const fetchWeatherData = async (city = "Pune") => {
+    try {
+      const response = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${WEATHER_API_KEY}`
+      );
+
+      const data = response.data;
+      const newWeatherData = {
+        temp: Math.round(data.main.temp),
+        condition: data.weather[0].main,
+        icon: getWeatherIcon(data.weather[0].main),
+        humidity: data.main.humidity,
+        windSpeed: data.wind.speed,
+      };
+
+      setWeatherData(newWeatherData);
+      await AsyncStorage.setItem("weatherData", JSON.stringify(newWeatherData));
+      setLocation(`${data.name}, ${data.sys.country}`);
+      setCityName(data.name);
+    } catch (error) {
+      console.error("Weather fetch failed, showing default.");
+    } finally {
+      setLoadingWeather(false);
+    }
   };
 
   const getactivities = async () => {
@@ -77,27 +113,56 @@ const HomeScreen = ({ navigation }) => {
       setAgentLogo(decodedToken.agent_logo);
       const locationId = await AsyncStorage.getItem("locationid");
       setlocationid(locationId);
-      
+
       if (!authToken || !locationId) {
         console.error("Auth token or Location ID missing");
         return;
       }
 
       const response = await axios.get(`${API_URL}/task`, {
-        params: { 
+        params: {
           location_id: locationId,
-          id_deleted: false 
+          id_deleted: false,
         },
       });
-      
+
       if (response.data && Array.isArray(response.data)) {
         setactivities(response.data);
         setTopActivities(response.data);
       } else {
-        console.error("Unexpected API response format", response.data.transformedTasks);
+        console.error("Unexpected API response format", response.data);
       }
     } catch (error) {
-      console.error("Error fetching shops:", error);
+      console.error("Error fetching activities:", error);
+    }
+  };
+
+  const GetPlaces = async () => {
+    try {
+      const authToken = await AsyncStorage.getItem("authToken");
+      setToken(authToken);
+      const destinationId = await AsyncStorage.getItem("locationid");
+      if (!destinationId) throw new Error("Destination ID not found");
+
+      const response = await axios.get(
+        `${API_URL}/destination/${destinationId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.data || !response.data.data)
+        throw new Error("Invalid API Response");
+
+      const places = response.data.data || [];
+      const destinations = places.filter((place) => !place.top_activities);
+      const activities = places.filter((place) => place.top_activities);
+      setTopDestinations(destinations);
+    } catch (error) {
+      console.error("Error fetching places:", error);
     }
   };
 
@@ -126,37 +191,6 @@ const HomeScreen = ({ navigation }) => {
 
     condition = condition.toLowerCase();
     return icons[condition] || icons["default"];
-  };
-
-  const fetchWeatherData = async (city = "Pune") => {
-    try {
-      setLoadingWeather(true);
-      const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${WEATHER_API_KEY}`
-      );
-
-      const data = response.data;
-      setWeatherData({
-        temp: Math.round(data.main.temp),
-        condition: data.weather[0].main,
-        icon: getWeatherIcon(data.weather[0].main),
-        humidity: data.main.humidity,
-        windSpeed: data.wind.speed,
-      });
-      setLocation(`${data.name}, ${data.sys.country}`);
-      setCityName(data.name);
-    } catch (error) {
-      setWeatherData({
-        temp: 25,
-        condition: "Clear",
-        icon: getWeatherIcon("clear"),
-        humidity: 60,
-        windSpeed: 5,
-      });
-      setLocation("Pune, India");
-    } finally {
-      setLoadingWeather(false);
-    }
   };
 
   const getCityFromCoords = async (lat, lon) => {
@@ -191,35 +225,6 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-  const GetPlaces = async () => {
-    try {
-      const authToken = await AsyncStorage.getItem("authToken");
-      setToken(authToken);
-      const destinationId = await AsyncStorage.getItem("locationid");
-      if (!destinationId) throw new Error("Destination ID not found");
-
-      const response = await axios.get(
-        `${API_URL}/destination/${destinationId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.data || !response.data.data)
-        throw new Error("Invalid API Response");
-
-      const places = response.data.data || [];
-      const destinations = places.filter((place) => !place.top_activities);
-      const activities = places.filter((place) => place.top_activities);
-      setTopDestinations(destinations);
-    } catch (error) {
-      console.error("Error fetching places:", error);
-    }
-  };
-
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -235,7 +240,6 @@ const HomeScreen = ({ navigation }) => {
       return <View style={styles.WetherReportContainer}></View>;
     }
 
-
     return (
       <View style={styles.WetherReportContainer}>
         <Image source={{ uri: weatherData.icon }} style={styles.weatherIcon} />
@@ -244,7 +248,6 @@ const HomeScreen = ({ navigation }) => {
             {weatherData.temp}°<Text style={styles.celcius}>C</Text>
           </Text>
           <Text>{weatherData.condition}</Text>
-         
         </View>
       </View>
     );
@@ -253,171 +256,179 @@ const HomeScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={closeSidebar}>
       <View style={{ flex: 1 }}>
-      {loading ? (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <LottieView
-        source={loadingAnimation}
-        autoPlay
-        loop
-        style={{ width: 200, height: 200 }}
-      />
-    </View>
-
-      ) : (
-        
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={toggleSidebar} style={{ padding: 10 }}>
-              <Icon
-                name={isSidebarOpen ? "close" : "menu"}
-                size={28}
-                color="#000"
-              />
-            </TouchableOpacity>
-            <Image
-              source={{
-                uri: agentLogo,
-              }}
-              style={styles.profileImage}
+        {loading ? (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <LottieView
+              source={loadingAnimation}
+              autoPlay
+              loop
+              style={{ width: 200, height: 200 }}
             />
-            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-              <FontAwesome
-                name="user"
-                size={28}
-                color="#000"
-                style={styles.search}
-              />
-            </TouchableOpacity>{" "}
           </View>
-
-          <Text style={styles.welcomeText}>Welcome!</Text>
-          <ScrollView contentContainerStyle={{ paddingBottom: hp("10%") }}>
-            <View style={styles.weatherContainer}>
-              <View style={styles.wetherLocation}>
-                <Text style={styles.locationText}>📍 {location}</Text>
-                <Text style={styles.DateText}>{currentDate}</Text>
-              </View>
-              <WeatherDisplay />
-            </View>
-
-            <View style={styles.categoriesContainer}>
-            <CategoryItem title="Restaurants" screen="Food" image={require("../../assets/restaurant.jpg")}/>
-<CategoryItem title="Activities" screen="Activities" image={require("../../assets/activity.jpg")}/>
-<CategoryItem title="Shopping" screen="Shopping" image={require("../../assets/shopping.jpg")}/>
-
-            </View>
-
-            <Text style={styles.sectionTitle}>Top Destinations</Text>
-            <View style={{ marginLeft: wp("5%") }}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {topDestinations.map((item) => (
-                  <TouchableOpacity
-                    key={item._id}
-                    onPress={() =>
-                      navigation.navigate("Indetail", { destination: item })
-                    }
-                  >
-                    <DestinationItem
-                      title={item.place_name}
-                      imageUri={item.image_urls[0]}
-                    />
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-
-            <View>
-              <Text style={styles.Activitytext}>Top Activities</Text>
-              <FlatList
-                data={topActivities}
-                keyExtractor={(item) => item._id}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.listContainer}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.card}
-                    onPress={() =>
-                      navigation.navigate("DetailedScreen", {
-                        activity: item,
-                        locationid,
-                      })
-                    }
-                  >
-                    <Image
-                      style={styles.activityImage}
-                      source={{ uri: item.image_url[0] }}
-                    />
-
-                    {/* Details Section */}
-                    <View style={styles.infoContainer}>
-                      <Text style={styles.activityName}>{item.name}</Text>
-
-                      {/* Business Name & Location */}
-                      <View style={styles.row}>
-                        <Ionicons
-                          name="business-outline"
-                          size={18}
-                          color="#555"
-                        />
-                        <Text style={styles.businessName}>
-                          {item.business_name}
-                        </Text>
-                      </View>
-
-                      <View style={styles.row}>
-                        <Ionicons
-                          name="location-outline"
-                          size={18}
-                          color="#E63946"
-                        />
-                        <Text style={styles.city}>{item.city}</Text>
-                      </View>
-
-                      {/* Price & Rating */}
-                      <View style={styles.row}>
-                        <Ionicons
-                          name="pricetag-outline"
-                          size={18}
-                          color="#28A745"
-                        />
-                        <Text style={styles.price}>₹{item.price}</Text>
-                      </View>
-
-                      <View style={styles.row}>
-                        <Ionicons name="star" size={18} color="#FFD700" />
-                        <Text style={styles.rating}>
-                          {item.customer_rating} ★
-                        </Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                )}
+        ) : (
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <TouchableOpacity onPress={toggleSidebar} style={{ padding: 10 }}>
+                <Icon
+                  name={isSidebarOpen ? "close" : "menu"}
+                  size={28}
+                  color="#000"
+                />
+              </TouchableOpacity>
+              <Image
+                source={{
+                  uri: agentLogo,
+                }}
+                style={styles.profileImage}
               />
+              <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+                <FontAwesome
+                  name="user"
+                  size={28}
+                  color="#000"
+                  style={styles.search}
+                />
+              </TouchableOpacity>{" "}
             </View>
-          </ScrollView>
-        </View>
- )}
+
+            <Text style={styles.welcomeText}>Welcome!</Text>
+            <ScrollView contentContainerStyle={{ paddingBottom: hp("10%") }}>
+              <View style={styles.weatherContainer}>
+                <View style={styles.wetherLocation}>
+                  <Text style={styles.locationText}>📍 {location}</Text>
+                  <Text style={styles.DateText}>{currentDate}</Text>
+                </View>
+                <WeatherDisplay />
+              </View>
+
+              <View style={styles.categoriesContainer}>
+                <CategoryItem
+                  title="Restaurants"
+                  screen="Food"
+                  image={require("../../assets/restaurant.jpg")}
+                />
+                <CategoryItem
+                  title="Activities"
+                  screen="Activities"
+                  image={require("../../assets/activity.jpg")}
+                />
+                <CategoryItem
+                  title="Shopping"
+                  screen="Shopping"
+                  image={require("../../assets/shopping.jpg")}
+                />
+              </View>
+
+              <Text style={styles.sectionTitle}>Top Destinations</Text>
+              <View style={{ marginLeft: wp("5%") }}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {topDestinations.map((item) => (
+                    <TouchableOpacity
+                      key={item._id}
+                      onPress={() =>
+                        navigation.navigate("Indetail", { destination: item })
+                      }
+                    >
+                      <DestinationItem
+                        title={item.place_name}
+                        imageUri={item.image_urls[0]}
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+
+              <View>
+                <Text style={styles.Activitytext}>Top Activities</Text>
+                <FlatList
+                  data={topActivities}
+                  keyExtractor={(item) => item._id}
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={styles.listContainer}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={styles.card}
+                      onPress={() =>
+                        navigation.navigate("DetailedScreen", {
+                          activity: item,
+                          locationid,
+                        })
+                      }
+                    >
+                      <Image
+                        style={styles.activityImage}
+                        source={{ uri: item.image_url[0] }}
+                      />
+
+                      {/* Details Section */}
+                      <View style={styles.infoContainer}>
+                        <Text style={styles.activityName}>{item.name}</Text>
+
+                        {/* Business Name & Location */}
+                        <View style={styles.row}>
+                          <Ionicons
+                            name="business-outline"
+                            size={18}
+                            color="#555"
+                          />
+                          <Text style={styles.businessName}>
+                            {item.business_name}
+                          </Text>
+                        </View>
+
+                        <View style={styles.row}>
+                          <Ionicons
+                            name="location-outline"
+                            size={18}
+                            color="#E63946"
+                          />
+                          <Text style={styles.city}>{item.city}</Text>
+                        </View>
+
+                        {/* Price & Rating */}
+                        <View style={styles.row}>
+                          <Ionicons
+                            name="pricetag-outline"
+                            size={18}
+                            color="#28A745"
+                          />
+                          <Text style={styles.price}>₹{item.price}</Text>
+                        </View>
+
+                        <View style={styles.row}>
+                          <Ionicons name="star" size={18} color="#FFD700" />
+                          <Text style={styles.rating}>
+                            {item.customer_rating} ★
+                          </Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                />
+              </View>
+            </ScrollView>
+          </View>
+        )}
         {isSidebarOpen && <Sidebar isSidebarOpen={isSidebarOpen} />}
       </View>
     </TouchableWithoutFeedback>
   );
 };
 
-const CategoryItem = ({ title,screen,image }) => {
-  const navigation=useNavigation()
-  return(
-<TouchableOpacity style={styles.categoryItem} onPress={()=>navigation.navigate(screen)}>
-    <Image
-      source={image}
-      style={styles.categoryImage}
-    />
-    <Text style={styles.categorytitle}>{title}</Text>
-  </TouchableOpacity>
-  )
-  
-
-
-}
+const CategoryItem = ({ title, screen, image }) => {
+  const navigation = useNavigation();
+  return (
+    <TouchableOpacity
+      style={styles.categoryItem}
+      onPress={() => navigation.navigate(screen)}
+    >
+      <Image source={image} style={styles.categoryImage} />
+      <Text style={styles.categorytitle}>{title}</Text>
+    </TouchableOpacity>
+  );
+};
 const DestinationItem = ({ title, imageUri }) => {
   return (
     <View style={styles.destinationItem}>
